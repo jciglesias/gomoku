@@ -1,4 +1,9 @@
 
+marks = {
+    0: ':material/radio_button_unchecked:',
+    -1: ':material/cancel:',
+    1: ':material/check_circle:'
+}
 
 def make_move(board, row, col, player, empty_cell) -> list:
     if board[row][col] == empty_cell:
@@ -30,4 +35,4 @@ def reset_game(empty_cell, board_size):
     return [[empty_cell for _ in range(board_size)] for _ in range(board_size)]
     
 def switch_player(player):
-    return 1 if player == -1 else -1
+    return player * -1
