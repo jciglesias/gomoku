@@ -22,7 +22,7 @@ def heuristic(board_size, win_len, tab):
                     check_direction(board_size, win_len, tab, i, j, 0, 1) or \
                     check_direction(board_size, win_len, tab, i, j, 1, 1) or \
                     check_direction(board_size, win_len, tab, i, j, 1, -1):
-                    return 100
+                    return 1000
     result = 0
     if win_len > 1:
         for i in range(board_size):
