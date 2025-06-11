@@ -47,24 +47,22 @@ def ab_minmax(node: node, depth: int, maximizing_player: bool, alpha, beta)-> no
                 break
         return best_node
 
-def create_tree(board, player, depth, heuristic_function, empty_cell):
-    root = node(point=None, heuristic=0, player=player)
-    if depth == 0 or is_terminal(board, player, empty_cell):
-        root.heuristic = heuristic_function(board, player, empty_cell)
+def create_tree(board, player, depth, heuristic_function, empty_cell, win_len, point):
+    root = node(point=point, heuristic=0, player=player)
+    if depth == 0 or is_terminal(board, empty_cell, win_len):
+        root.heuristic = heuristic_function(len(board), win_len, board, player)
         root.is_terminal = True
         return root
     for move in get_possible_moves(board, empty_cell):
-        new_board = make_move(board, move, player, empty_cell)
-        child_node = create_tree(new_board, switch_player(player), depth - 1, heuristic_function, empty_cell)
+        new_board = make_move(board, move[0], move[1], player, empty_cell)
+        child_node = create_tree(new_board, switch_player(player), depth - 1, heuristic_function, empty_cell, win_len, move)
         child_node.point = move
         child_node.player = player
         root.add_child(child_node)
     return root
 
-def is_terminal(board, player, empty_cell):
-    if check_winner(board, player):
-        return True
-    if all(cell != empty_cell for row in board for cell in row):
+def is_terminal(board, empty_cell, win_len):
+    if check_winner(board, empty_cell, len(board), win_len):
         return True
     return False
 

@@ -18,7 +18,7 @@ for i in range(board_size):
     cols = st.columns(board_size)
     for j in range(board_size):
         if cols[j].button("", icon=marks[st.session_state.board[i][j]], key=f"{i}-{j}"):
-            make_move(st.session_state.board, i, j, st.session_state.current_player, 0)
+            st.session_state.board = make_move(st.session_state.board, i, j, st.session_state.current_player, 0)
             w = check_winner(st.session_state.board, 0, board_size, win_len)
             if w == 1:
                 st.session_state.winner = st.session_state.current_player

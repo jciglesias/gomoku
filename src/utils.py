@@ -8,6 +8,7 @@ marks = {
 def make_move(board, row, col, player, empty_cell) -> list:
     if board[row][col] == empty_cell:
         board[row][col] = player
+    return board
 
 def check_winner(board, empty_cell, board_size, win_len):
     for i in range(board_size):
