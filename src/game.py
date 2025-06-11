@@ -1,5 +1,6 @@
 import streamlit as st
 from src.utils import *
+from src.bot import bot_move
 
 with st.sidebar:
     board_size = st.slider("Board Size", 5, 20, 19, 1)
@@ -29,7 +30,8 @@ for i in range(board_size):
                 st.session_state.board = reset_game(0, board_size)
                 st.session_state.current_player = -1
                 st.switch_page("src/gameover.py")
-            st.session_state.current_player *= -1
+            # st.session_state.current_player *= -1
+            st.session_state.board = bot_move(st.session_state.board, board_size, win_len, (i, j))
             st.rerun()
 
 
