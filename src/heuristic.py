@@ -13,11 +13,11 @@ def check_direction(board_size, win_len, tab, player, row, col, delta_row, delta
             break
     return count == win_len
 
-def heuristic(board_size, win_len, tab, player):
+def heuristic_one_player(board_size, win_len, tab, player):
     start = time.perf_counter()
     for i in range(board_size):
         for j in range(board_size):
-            if tab[i][j] is not np.nan:
+            if tab[i][j] != 0:
                 if check_direction(board_size, win_len, tab, player, i, j, 1, 0) or \
                     check_direction(board_size, win_len, tab, player, i, j, 0, 1) or \
                     check_direction(board_size, win_len, tab, player, i, j, 1, 1) or \
@@ -27,7 +27,7 @@ def heuristic(board_size, win_len, tab, player):
     if win_len > 1:
         for i in range(board_size):
             for j in range(board_size):
-                if tab[i][j] is not np.nan:
+                if tab[i][j] != 0:
                     if check_direction(board_size, win_len - 1, tab, player, i, j, 1, 0) or \
                         check_direction(board_size, win_len - 1, tab, player, i, j, 0, 1) or \
                         check_direction(board_size, win_len - 1, tab, player, i, j, 1, 1) or \
@@ -36,7 +36,7 @@ def heuristic(board_size, win_len, tab, player):
     if win_len > 2:
         for i in range(board_size):
             for j in range(board_size):
-                if tab[i][j] is not np.nan:
+                if tab[i][j] != 0:
                     if check_direction(board_size, win_len - 2, tab, player, i, j, 1, 0) or \
                         check_direction(board_size, win_len - 2, tab, player, i, j, 0, 1) or \
                         check_direction(board_size, win_len - 2, tab, player, i, j, 1, 1) or \
@@ -45,7 +45,7 @@ def heuristic(board_size, win_len, tab, player):
     if win_len > 3:
         for i in range(board_size):
             for j in range(board_size):
-                if tab[i][j] is not np.nan:
+                if tab[i][j] != 0:
                     if check_direction(board_size, win_len - 3, tab, player, i, j, 1, 0) or \
                         check_direction(board_size, win_len - 3, tab, player, i, j, 0, 1) or \
                         check_direction(board_size, win_len - 3, tab, player, i, j, 1, 1) or \
@@ -54,3 +54,6 @@ def heuristic(board_size, win_len, tab, player):
     end = time.perf_counter()
     print(f"Heuristic in {(end - start)*1000:0.4f} milliseconds")
     return result  
+
+def heuristic(board_size, win_len, tab, player):
+    return heuristic_one_player(board_size, win_len, tab, player) - heuristic_one_player(board_size, win_len, tab, - player)
