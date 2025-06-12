@@ -52,7 +52,7 @@ def heuristic_one_player(board_size, win_len, tab, player):
                         check_direction(board_size, win_len - 3, tab, player, i, j, 1, -1):
                         result += 1
     end = time.perf_counter()
-    print(f"Heuristic in {(end - start)*1000:0.4f} milliseconds")
+    # print(f"Heuristic in {(end - start)*1000:0.4f} milliseconds")
     return result  
 
 def heuristic(board_size, win_len, tab, player):
