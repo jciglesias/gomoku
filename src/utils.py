@@ -38,3 +38,4 @@ def reset_game(empty_cell, board_size):
     
 def switch_player(player):
     return player * -1
+
