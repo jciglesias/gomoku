@@ -1,6 +1,7 @@
 import streamlit as st
 from src.utils import *
 from src.bot import bot_move
+from src.valid_move import check_valid_move
 from time import perf_counter
 
 def change_board_size():
