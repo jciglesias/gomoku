@@ -29,7 +29,11 @@ for i in range(board_size):
     cols = st.columns(board_size)
     for j in range(board_size):
         if cols[j].button(marks[st.session_state.board[i][j]], key=f"{i}-{j}", disabled=st.session_state.current_player == 1):
-            st.session_state.board = make_move(st.session_state.board, i, j, -1, 0)
+            if check_valid_move(st.session_state.board, i, j, 0, st.session_state.current_player):
+                st.session_state.board = make_move(st.session_state.board, i, j, -1, 0)
+            else:
+                st.toast("Invalid move! Please try again.", icon="🚫")
+                continue
             w = check_winner(st.session_state.board, 0, board_size, win_len)
             if w == 1:
                 st.session_state.winner = st.session_state.current_player
