@@ -1,65 +1,74 @@
 import streamlit as st
+from src.utils import *
+from src.bot import bot_move
+from time import perf_counter
 
-empty_cell = ':material/radio_button_unchecked:'
-x_cell = ':material/cancel:'
-o_cell = ':material/check_circle:'
+def change_board_size():
+    st.session_state.board = reset_game(0, st.session_state.board_size)
+    st.session_state.current_player = -1
+    if 'bot_time' in st.session_state:
+        del st.session_state.bot_time
 
 with st.sidebar:
-    board_size = st.slider("Board Size", 5, 20, 19, 1)
+    board_size = st.slider("Board Size", 5, 20, 19, 1, on_change=change_board_size, key="board_size")
     win_len = st.slider("Winning Length", 3, 10, 5, 1)
 
 st.title("Gomoku Game")
 
 if 'board' not in st.session_state:
-    st.session_state.board = [[empty_cell for _ in range(board_size)] for _ in range(board_size)]
-    st.session_state.current_player = x_cell
+    st.session_state.board = [[0 for _ in range(board_size)] for _ in range(board_size)]
+    st.session_state.current_player = -1
 with st.sidebar:
     st.write("Current Player:")
-    st.markdown(st.session_state.current_player)
+    st.markdown(marks[st.session_state.current_player])
 
-def make_move(row, col):
-    if st.session_state.board[row][col] == empty_cell:
-        st.session_state.board[row][col] = st.session_state.current_player
-        st.session_state.current_player = o_cell if st.session_state.current_player == x_cell else x_cell
-        check_winner()
-        st.rerun()
-
-def check_winner():
-    # Check rows, columns, and diagonals for a winning condition
-    for i in range(board_size):
-        for j in range(board_size):
-            if st.session_state.board[i][j] != empty_cell:
-                if check_direction(i, j, 1, 0) or check_direction(i, j, 0, 1) or \
-                   check_direction(i, j, 1, 1) or check_direction(i, j, 1, -1):
-                    st.session_state.winner = st.session_state.board[i][j]
-                    reset_game()
-                    st.switch_page("src/gameover.py")
-    if all(st.session_state.board[i][j] != empty_cell for i in range(board_size) for j in range(board_size)):
-        reset_game()
-        st.switch_page("src/gameover.py")
-
-def check_direction(row, col, delta_row, delta_col):
-    count = 0
-    for k in range(win_len):
-        r = row + k * delta_row
-        c = col + k * delta_col
-        if 0 <= r < board_size and 0 <= c < board_size and st.session_state.board[r][c] == st.session_state.board[row][col]:
-            count += 1
-        else:
-            break
-    return count == win_len
-
-def reset_game():
-    st.session_state.board = [[empty_cell for _ in range(board_size)] for _ in range(board_size)]
-    st.session_state.current_player = x_cell
+if st.session_state.current_player == -1 and 'bot_time' in st.session_state:
+    st.toast(f"Bot made a move in {st.session_state.bot_time:.4f} seconds", icon="🤖")
 
 for i in range(board_size):
     cols = st.columns(board_size)
     for j in range(board_size):
-        if cols[j].button("", icon=st.session_state.board[i][j], key=f"{i}-{j}"):
-            make_move(i, j)
+        if cols[j].button(marks[st.session_state.board[i][j]], key=f"{i}-{j}", disabled=st.session_state.current_player == 1):
+            st.session_state.board = make_move(st.session_state.board, i, j, -1, 0)
+            w = check_winner(st.session_state.board, 0, board_size, win_len)
+            if w == 1:
+                st.session_state.winner = st.session_state.current_player
+                st.session_state.board = reset_game(0, board_size)
+                st.session_state.current_player = -1
+                st.switch_page("src/gameover.py")
+            elif w == -1:
+                st.session_state.board = reset_game(0, board_size)
+                st.session_state.current_player = -1
+                st.switch_page("src/gameover.py")
+            st.session_state.current_player *= -1
+            st.session_state.last_move = (i, j)
+            if 'bot_time' in st.session_state:
+                del st.session_state.bot_time
+            st.rerun()
+if st.session_state.current_player == 1:
+    start_time = perf_counter()
+    st.session_state.board = bot_move(st.session_state.board, board_size, win_len, st.session_state.last_move)
+    end_time = perf_counter()
+    st.session_state.bot_time = end_time - start_time
+    w = check_winner(st.session_state.board, 0, board_size, win_len)
+    if w == 1:
+        st.session_state.winner = st.session_state.current_player
+        st.session_state.board = reset_game(0, board_size)
+        st.session_state.current_player = -1
+        st.switch_page("src/gameover.py")
+    elif w == -1:
+        st.session_state.board = reset_game(0, board_size)
+        st.session_state.current_player = -1
+        st.switch_page("src/gameover.py")
+    else:
+        st.session_state.current_player *= -1
+        st.session_state.last_move = None
+        st.rerun()
 
 with st.sidebar:
-    if st.button("Reset Game"):
-        reset_game()
+    if st.button("Reset Game", disabled=st.session_state.current_player == 1):
+        st.session_state.board = reset_game(0, board_size)
+        st.session_state.current_player = -1
+        if 'bot_time' in st.session_state:
+            del st.session_state.bot_time
         st.rerun()
