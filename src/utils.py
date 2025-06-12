@@ -1,8 +1,8 @@
 from copy import deepcopy
 marks = {
     0: ':material/radio_button_unchecked:',
-    -1: ':material/cancel:',
-    1: ':material/check_circle:'
+    -1: ':green[:material/cancel:]',
+    1: ':red[:material/check_circle:]'
 }
 
 def make_move(board_og, row, col, player, empty_cell) -> list:
