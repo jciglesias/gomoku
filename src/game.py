@@ -22,7 +22,7 @@ with st.sidebar:
 for i in range(board_size):
     cols = st.columns(board_size)
     for j in range(board_size):
-        if cols[j].button("", icon=marks[st.session_state.board[i][j]], key=f"{i}-{j}"):
+        if cols[j].button("", icon=marks[st.session_state.board[i][j]], key=f"{i}-{j}", disabled=st.session_state.current_player == 1):
             st.session_state.board = make_move(st.session_state.board, i, j, -1, 0)
             w = check_winner(st.session_state.board, 0, board_size, win_len)
             if w == 1:
@@ -35,13 +35,27 @@ for i in range(board_size):
                 st.session_state.current_player = -1
                 st.switch_page("src/gameover.py")
             st.session_state.current_player *= -1
-            print(st.session_state.board, board_size, win_len)
-            st.session_state.board = bot_move(st.session_state.board, board_size, win_len, (i, j))
+            st.session_state.last_move = (i, j)
             st.rerun()
-
+if st.session_state.current_player == 1:
+    st.session_state.board = bot_move(st.session_state.board, board_size, win_len, st.session_state.last_move)
+    w = check_winner(st.session_state.board, 0, board_size, win_len)
+    if w == 1:
+        st.session_state.winner = st.session_state.current_player
+        st.session_state.board = reset_game(0, board_size)
+        st.session_state.current_player = -1
+        st.switch_page("src/gameover.py")
+    elif w == -1:
+        st.session_state.board = reset_game(0, board_size)
+        st.session_state.current_player = -1
+        st.switch_page("src/gameover.py")
+    else:
+        st.session_state.current_player *= -1
+        st.session_state.last_move = None
+        st.rerun()
 
 with st.sidebar:
-    if st.button("Reset Game"):
+    if st.button("Reset Game", disabled=st.session_state.current_player == 1):
         st.session_state.board = reset_game(0, board_size)
         st.session_state.current_player = -1
         st.rerun()
