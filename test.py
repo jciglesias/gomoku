@@ -90,18 +90,17 @@ def heuristic_diag(board_size, win_len, tab, player, reward):
     return result
 
 def heuristic(board_size, win_len, tab, player):
-    reward_closed = [0] * (win_len + 1)
-    reward_open1 = [0] + [0] + [10**i for i in range(-2, win_len, 2)]
-    reward_open2 = [0] + [0] + [10**i for i in range(-1, win_len + 1, 2)]
-    reward_closed[win_len] = 10**(win_len)
-    reward_open1[win_len] = 10**(win_len)
-    reward = [reward_closed, reward_open1, reward_open2]
+    # reward_closed = [0] * (win_len + 1)
+    # reward_open1 = [0] + [10**i for i in range(-2, win_len * 2 - 3, 2)]
+    # reward_open2 = [0] + [10**i for i in range(-1, win_len * 2 - 2, 2)]
+    # reward_closed[win_len] = 10**(win_len * 2 - 3)
+    # reward_open1[win_len] = 10**(win_len * 2 - 3)
+    # reward = [reward_closed, reward_open1, reward_open2]
 
-    # reward = [[0, 0, 0, 0, 0, 100000], #closed
-    #         [0, 0, 0.1, 1, 100, 100000], #open 1
-    #         [0, 0, 0.5, 10, 1000, 100000] #open 2
-    #         ]
-
+    reward = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0.01, 1, 100, 10000, 1000000, 100000000, 10000000000, 1000000000000, 100000000000000, 10000000000000000],
+          0, 0.1, 10, 1000, 100000, 10000000, 1000000000, 100000000000, 10000000000000, 1000000000000000, 100000000000000000]
+    
     tab = np.array(tab)
     res = heuristic_row(board_size, win_len, tab, player, reward)
     res += heuristic_row(board_size, win_len, tab.transpose(), player, reward)
