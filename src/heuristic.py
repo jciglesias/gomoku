@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import time
 
+
+
 def check_direction(board_size, win_len, tab, player, row, col, delta_row, delta_col):
     count = 0
     for k in range(win_len):
@@ -13,47 +15,96 @@ def check_direction(board_size, win_len, tab, player, row, col, delta_row, delta
             break
     return count == win_len
 
-def heuristic_one_player(board_size, win_len, tab, player):
-    start = time.perf_counter()
-    for i in range(board_size):
-        for j in range(board_size):
-            if tab[i][j] != 0:
-                if check_direction(board_size, win_len, tab, player, i, j, 1, 0) or \
-                    check_direction(board_size, win_len, tab, player, i, j, 0, 1) or \
-                    check_direction(board_size, win_len, tab, player, i, j, 1, 1) or \
-                    check_direction(board_size, win_len, tab, player, i, j, 1, -1):
-                    return 1000
+def heuristic_row(board_size, win_len, tab, player, reward):
+    i = 0
     result = 0
-    if win_len > 1:
-        for i in range(board_size):
-            for j in range(board_size):
-                if tab[i][j] != 0:
-                    if check_direction(board_size, win_len - 1, tab, player, i, j, 1, 0) or \
-                        check_direction(board_size, win_len - 1, tab, player, i, j, 0, 1) or \
-                        check_direction(board_size, win_len - 1, tab, player, i, j, 1, 1) or \
-                        check_direction(board_size, win_len - 1, tab, player, i, j, 1, -1):
-                        result += 20
-    if win_len > 2:
-        for i in range(board_size):
-            for j in range(board_size):
-                if tab[i][j] != 0:
-                    if check_direction(board_size, win_len - 2, tab, player, i, j, 1, 0) or \
-                        check_direction(board_size, win_len - 2, tab, player, i, j, 0, 1) or \
-                        check_direction(board_size, win_len - 2, tab, player, i, j, 1, 1) or \
-                        check_direction(board_size, win_len - 2, tab, player, i, j, 1, -1):
-                        result += 10
-    if win_len > 3:
-        for i in range(board_size):
-            for j in range(board_size):
-                if tab[i][j] != 0:
-                    if check_direction(board_size, win_len - 3, tab, player, i, j, 1, 0) or \
-                        check_direction(board_size, win_len - 3, tab, player, i, j, 0, 1) or \
-                        check_direction(board_size, win_len - 3, tab, player, i, j, 1, 1) or \
-                        check_direction(board_size, win_len - 3, tab, player, i, j, 1, -1):
-                        result += 1
-    end = time.perf_counter()
-    # print(f"Heuristic in {(end - start)*1000:0.4f} milliseconds")
-    return result  
+    while i <= board_size - 1:
+        j = 0
+        while j <= board_size - 1:
+            if tab[j][i] == player:
+                open = 0
+                if j - 1 >= 0:
+                    if tab[j - 1][i] == 0:
+                        open = 1
+                k = 0
+                while k <= win_len and j < board_size and tab[j][i] == player:
+                    k += 1
+                    j += 1
+                if j < board_size:
+                    if tab[j][i] == 0:
+                        open += 1
+                result += reward[open][k]
+            elif tab[j][i] == -player:
+                open = 0
+                if j - 1 >= 0:
+                    if tab[j - 1][i] == 0:
+                        open = 1
+                k = 0
+                while k <= win_len and j < board_size and tab[j][i] == -player:
+                    k += 1
+                    j += 1
+                if j < board_size:
+                    if tab[j][i] == 0:
+                        open += 1
+                result -= reward[open][k]
+            else:
+                j += 1
+        i += 1
+    return result
+
+def heuristic_diag(board_size, win_len, tab, player, reward):
+    result = 0
+    j =  1 - board_size
+    while j < board_size:
+        i = max(0, j)
+        while i < min(board_size, j + board_size):
+            if tab[i][i - j] == player:
+                    open = 0
+                    if i - 1 >= 0 and i - 1 - j >= 0:
+                        if tab[i - 1][i - 1 - j] == 0:
+                            open = 1
+                    k = 0
+                    while k <= win_len and i < min(board_size, j + board_size) and tab[i][i - j] == player:
+                        k += 1
+                        i += 1
+                    if i < board_size and i - j < board_size:
+                        if tab[i][i - j] == 0:
+                            open += 1
+                    result += reward[open][k]
+            elif tab[i][i - j] == -player:
+                    open = 0
+                    if i - 1 >= 0 and i - 1 - j >= 0:
+                        if tab[i - 1][i - 1 - j] == 0:
+                            open = 1
+                    k = 0
+                    while k <= win_len and i < min(board_size, j + board_size) and tab[i][i - j] == -player:
+                        k += 1
+                        i += 1
+                    if i < board_size and i - j < board_size:
+                        if tab[i][i - j] == 0:
+                            open += 1
+                    result -= reward[open][k]
+            else:
+                i += 1
+        j += 1
+    return result
 
 def heuristic(board_size, win_len, tab, player):
-    return heuristic_one_player(board_size, win_len, tab, player) - heuristic_one_player(board_size, win_len, tab, - player)
+    reward_closed = [0] * (win_len + 1)
+    reward_open1 = [0] + [0] + [10**i for i in range(-2, win_len, 2)]
+    reward_open2 = [0] + [0] + [10**i for i in range(-1, win_len + 1, 2)]
+    reward_closed[win_len] = 10**(win_len)
+    reward_open1[win_len] = 10**(win_len)
+    reward = [reward_closed, reward_open1, reward_open2]
+
+    # reward = [[0, 0, 0, 0, 0, 100000], #closed
+    #         [0, 0, 0.1, 1, 100, 100000], #open 1
+    #         [0, 0, 0.5, 10, 1000, 100000] #open 2
+    #         ]
+
+    tab = np.array(tab)
+    res = heuristic_row(board_size, win_len, tab, player, reward)
+    res += heuristic_row(board_size, win_len, tab.transpose(), player, reward)
+    res += heuristic_diag(board_size, win_len, tab, player, reward)
+    res += heuristic_diag(board_size, win_len, np.rot90(tab, k = 1), player, reward)
+    return res
