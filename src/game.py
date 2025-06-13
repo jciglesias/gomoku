@@ -24,9 +24,12 @@ st.title("Gomoku Game")
 
 if 'board' not in st.session_state:
     st.session_state.board = [[0 for _ in range(board_size)] for _ in range(board_size)]
+if 'turn' not in st.session_state:
+    st.session_state.turn = 0
 
 if st.session_state.current_player == -1 and 'bot_time' in st.session_state:
     st.toast(f"Bot made a move in {st.session_state.bot_time:.4f} seconds", icon="🤖")
+    st.sidebar.write(f"Bot Time: {st.session_state.bot_time:.4f} seconds")
     del st.session_state.bot_time
 help_board = st.session_state.board if not st.session_state.debug else get_heuristic_board(st.session_state.board, board_size, win_len)
 for i in range(board_size):
@@ -40,6 +43,7 @@ for i in range(board_size):
             ):
             if check_valid_move(st.session_state.board, i, j, 0, st.session_state.current_player):
                 st.session_state.board = make_move(st.session_state.board, i, j, st.session_state.current_player, 0)
+                st.session_state.turn += 1
             else:
                 st.toast("Invalid move! Please try again.", icon="🚫")
                 continue
@@ -60,7 +64,7 @@ for i in range(board_size):
             st.rerun()
 if st.session_state.current_player == 1 and mode == "Player vs Bot":
     start_time = perf_counter()
-    st.session_state.board = bot_move(st.session_state.board, board_size, win_len, debug)
+    st.session_state.board = bot_move(st.session_state.board, board_size, win_len, st.session_state.turn)
     end_time = perf_counter()
     st.session_state.bot_time = end_time - start_time
     w = check_winner(st.session_state.board, 0, board_size, win_len)

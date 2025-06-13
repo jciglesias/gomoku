@@ -1,4 +1,4 @@
-from src.utils import make_move, check_winner, switch_player
+from src.utils import make_move, check_winner
 
 
 class move:
@@ -30,48 +30,16 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
     # Try moves in order of best heuristic; use alpha-beta to see if it's winning
     for mv in move_objects:
         test_board = make_move(board, mv.point[0], mv.point[1], player, empty_cell=0)
-        # score = alpha_beta(test_board, depth_limit - 1, -float('inf'), float('inf'), True,
-        #                    board_size, win_len, heuristic, player, opponent=2 if player == 1 else 1)
-        # if score >= 0:  # you can adjust this threshold to mean "winning"
-        #     print(f"Found winning move: {mv.point} with score: {score}")
-        #     return make_move(board, mv.point[0], mv.point[1], player, empty_cell=0)
-        if leads_to_win_or_safe(test_board, player, -1, depth_limit - 1, board_size, win_len, heuristic):
+        if minmax(test_board, player, -1, depth_limit - 1, board_size, win_len, heuristic):
             print(f"Chose move leading to win/safety: {mv.point}")
             return make_move(board, mv.point[0], mv.point[1], player, empty_cell=0)
 
     # If no immediate win found, return the best heuristic move
     best = move_objects[0]
     return make_move(board, best.point[0], best.point[1], player, empty_cell=0)
-
-def alpha_beta(board, depth, alpha, beta, maximizing, board_size, win_len, heuristic, player, opponent):
-    if depth == 0 or check_winner(board, empty_cell=0, board_size=board_size, win_len=win_len):
-        return heuristic(board_size, win_len, board, player)
-
-    moves = get_possible_moves(board, empty_cell=0)
-
-    if maximizing:
-        max_eval = -float('inf')
-        for m in moves:
-            new_board = make_move(board, m[0], m[1], player, empty_cell=0)
-            eval = alpha_beta(new_board, depth - 1, alpha, beta, False, board_size, win_len, heuristic, player, opponent)
-            max_eval = max(max_eval, eval)
-            alpha = max(alpha, eval)
-            if beta <= alpha:
-                break
-        return max_eval
-    else:
-        min_eval = float('inf')
-        for m in moves:
-            new_board = make_move(board, m[0], m[1], opponent, empty_cell=0)
-            eval = alpha_beta(new_board, depth - 1, alpha, beta, True, board_size, win_len, heuristic, player, opponent)
-            min_eval = min(min_eval, eval)
-            beta = min(beta, eval)
-            if beta <= alpha:
-                break
-        return min_eval
     
-def leads_to_win_or_safe(board, player, opponent, depth, board_size, win_len, heuristic):
-    if depth == 0 or check_winner(board, empty_cell=0, board_size=board_size, win_len=win_len):
+def minmax(board, player, opponent, depth, board_size, win_len, heuristic):
+    if depth <= 0 or check_winner(board, empty_cell=0, board_size=board_size, win_len=win_len):
         # Victory or safe enough
         return True
 
@@ -84,7 +52,7 @@ def leads_to_win_or_safe(board, player, opponent, depth, board_size, win_len, he
         scored.append((score, m))
     scored.sort(reverse=True)
 
-    for _, move in scored[:5]:  # Only try top 5 moves for speed
+    for _, move in scored[:3]:  # Only try top 3 moves for speed
         test_board = make_move(board, move[0], move[1], player, empty_cell=0)
         # Simulate opponent’s best response
         opp_moves = get_possible_moves(test_board, empty_cell=0)
@@ -105,7 +73,7 @@ def leads_to_win_or_safe(board, player, opponent, depth, board_size, win_len, he
                 return False
 
             # Try recursive lookahead
-            if leads_to_win_or_safe(opp_board, player, opponent, depth - 2, board_size, win_len, heuristic):
+            if minmax(opp_board, player, opponent, depth - 2, board_size, win_len, heuristic):
                 return True
 
     return False
@@ -131,6 +99,11 @@ def get_possible_moves(board, empty_cell, radius=2):
                                 possible_moves.add((ni, nj))
 
     return list(possible_moves)
+
+def first_move(board, player):
+    moves = get_possible_moves(board, empty_cell=0, radius=1)
+    return make_move(board, moves[0][0], moves[0][1], player, empty_cell=0) if moves else board
+
 
 
  
