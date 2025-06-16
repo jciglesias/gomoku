@@ -18,7 +18,7 @@ def check_direction(board_size, win_len, tab, player, row, col, delta_row, delta
 def heuristic_row(board_size, win_len, tab, player, reward):
     i = 0
     result = 0
-    while i <= board_size - 1:
+    while i < board_size:
         j = 0
         while j <= board_size - 1:
             if tab[j][i] == player:
