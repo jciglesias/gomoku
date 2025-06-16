@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import time
+import re
 
 directions = [(0, 1),
             (1, 0),
@@ -16,7 +16,9 @@ def getlines(board_size, win_len, tab, player, row, col):
             r = row + j * directions[i][0]
             c = col + j * directions[i][1]
             if 0 <= r < board_size and 0 <= c < board_size:
-                if tab[r][c] == 0:
+                if r == row and c == col:
+                    ligne += 'Y'
+                elif tab[r][c] == 0:
                     ligne += '_'
                 elif tab[r][c] == player:
                     ligne += 'X'
@@ -28,24 +30,14 @@ def getlines(board_size, win_len, tab, player, row, col):
 def extract_motifs(ligne):
     res = 0
     pattern_scores = [
-        ('XXXXX', 100000),   # 5
-        ('_XXXX', 10000),    # 4 opened
-        ('XXXX_', 10000),    # 4 opened
-        ('XXXX', 5000),      # 4 blocked
-        ('_XXX', 1000),    # 3 opened
-        ('XXX_', 1000),    # 3 opened
-        ('XXX', 100),      # 3 blocked
-        ('XX', 50),      # 3 blocked
-        ('X', 10),      # 3 blocked
+        ('XOOY', 100000),   # capture
+        ('YOOX', 100000)    # capture
     ]
     for pattern, score in pattern_scores:
-        index = 0
-        while index < len(ligne):
-            if ligne[index:].startswith(pattern):
-                res += score
-                index += 1
-            else:
-                index += 1
+        match = re.search(pattern, ligne)
+        print(f"Pattern {pattern} ligne {ligne} match {match}")
+        if match:
+            res += score
     return res
 
 def heuristic(board_size, win_len, tab, player, row, col):
