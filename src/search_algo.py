@@ -31,11 +31,11 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
         test_board = make_move(board, mv.point[0], mv.point[1], player, empty_cell=0)
         if minmax(test_board, player, -1, depth_limit - 1, board_size, win_len, heuristic):
             print(f"Chose move leading to win/safety: {mv.point}")
-            return make_move(board, mv.point[0], mv.point[1], player, empty_cell=0)
+            return mv.point
 
     # If no immediate win found, return the best heuristic move
     best = move_objects[0]
-    return make_move(board, best.point[0], best.point[1], player, empty_cell=0)
+    return best.point if best else None
     
 def minmax(board, player, opponent, depth, board_size, win_len, heuristic):
     if depth <= 0 or check_winner(board, empty_cell=0, board_size=board_size, win_len=win_len):
@@ -100,4 +100,4 @@ def get_possible_moves(board, empty_cell, radius=2):
 
 def first_move(board, player):
     moves = get_possible_moves(board, empty_cell=0, radius=1)
-    return make_move(board, moves[0][0], moves[0][1], player, empty_cell=0) if moves else board
+    return moves[0]

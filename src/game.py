@@ -36,9 +36,10 @@ for i in range(board_size):
     cols = st.columns(board_size)
     for j in range(board_size):
         if cols[j].button(
-            marks[st.session_state.board[i][j]], 
+            marks[st.session_state.board[i][j]],
+            type="secondary" if st.session_state.turn and st.session_state.last_move == (i, j) else "tertiary",
             key=f"{i}-{j}", 
-            help=f"{help_board[i][j]}",
+            # help=f"{help_board[i][j]}",
             disabled=st.session_state.current_player == 1 and mode == "Player vs Bot"
             ):
             if check_valid_move(st.session_state.board, i, j, 0, st.session_state.current_player):
@@ -64,8 +65,9 @@ for i in range(board_size):
             st.rerun()
 if st.session_state.current_player == 1 and mode == "Player vs Bot":
     start_time = perf_counter()
-    st.session_state.board = bot_move(st.session_state.board, board_size, win_len, st.session_state.turn)
+    st.session_state.last_move = bot_move(st.session_state.board, board_size, win_len, st.session_state.turn)
     end_time = perf_counter()
+    st.session_state.board = make_move(st.session_state.board, st.session_state.last_move[0], st.session_state.last_move[1], 1, 0)
     st.session_state.bot_time = end_time - start_time
     w = check_winner(st.session_state.board, 0, board_size, win_len)
     if w == 1:
@@ -79,7 +81,6 @@ if st.session_state.current_player == 1 and mode == "Player vs Bot":
         st.switch_page("src/gameover.py")
     else:
         st.session_state.current_player *= -1
-        st.session_state.last_move = None
         st.rerun()
 
 with st.sidebar:
