@@ -1,14 +1,45 @@
 from copy import deepcopy
+from src.valid_move import check_capture
+
 marks = {
     0: ':material/radio_button_unchecked:',
     1: ':red[:material/cancel:]',
     -1: ':green[:material/check_circle:]'
 }
 
-def make_move(board_og, row, col, player, empty_cell) -> list:
+def remove_captured(board, row, col, empty_cell, player):
+    directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+
+    # Check all 8 directions for a capture
+    for dr, dc in directions:
+        r, c = row + dr, col + dc
+        if 0 <= r < len(board) and 0 <= c < len(board):
+            if board[r][c] == -player:  # Found an opponent piece
+                # search in the same direction for another opponent piece
+                r2, c2 = r + dr, c + dc
+                if 0 <= r2 < len(board) and 0 <= c2 < len(board):
+                    if board[r2][c2] == -player:
+                        # check if the next cell in the same direction is player's piece
+                        r3, c3 = r2 + dr, c2 + dc
+                        if 0 <= r3 < len(board) and 0 <= c3 < len(board):
+                            if board[r3][c3] == player:
+                                # Remove the captured pieces
+                                board[r][c] = empty_cell
+                                board[r2][c2] = empty_cell
+    return board
+
+def make_move(board_og, row, col, player, empty_cell, score=None) -> list:
     board = deepcopy(board_og)
+    is_capture = check_capture(board, row, col, empty_cell, player)
+    # print(f"Check {row,col}",is_capture)
     if board[row][col] == empty_cell:
         board[row][col] = player
+        if is_capture:
+            # print(f"Capture at {row,col}")
+            board = remove_captured(board, row, col, empty_cell, player)
+            if score is not None:
+                score[player] += 1
+    del board_og
     return board
 
 def check_winner(board, empty_cell, board_size, win_len):
