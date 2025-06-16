@@ -1,4 +1,4 @@
-from src.utils import make_move, check_winner
+from src.utils import *
 
 class move:
     point: tuple
@@ -10,6 +10,8 @@ class move:
 def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit=10):
 
     moves = get_possible_moves(board, empty_cell=0)
+    if not moves and check_empty_board(board, empty_cell=0):
+        return (len(board) // 2, len(board) // 2)
     move_objects = []
 
     # Score all possible moves using the heuristic

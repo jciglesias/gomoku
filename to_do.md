@@ -19,7 +19,7 @@
   - necessite d'envoyer a la fonction la position du dernier move + le compte de capture pour le bot et le player
 - [ ] Implementer une visualisation des scores de la fonction heuristique par case (depth 1)
 - [ ] Implementer une visualisation des scores de la fonction heuristique par case (depth 1 a 10)
-- [ ] Suggestion de coup pour le mode local (deux joueurs humains)
+- [X] Suggestion de coup pour le mode local (deux joueurs humains)
 
 
 ## Bonus

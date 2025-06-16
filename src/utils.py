@@ -39,3 +39,12 @@ def reset_game(empty_cell, board_size):
 def switch_player(player):
     return player * -1
 
+def get_button_type(last_move, i, j, suggestion=None):
+    if suggestion and (i, j) in suggestion:
+        return "primary"
+    if last_move and last_move == (i, j):
+        return "secondary"
+    return "tertiary"
+
+def check_empty_board(board, empty_cell):
+    return all(cell == empty_cell for row in board for cell in row)

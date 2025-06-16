@@ -22,3 +22,6 @@ def get_heuristic_board(board, board_size, win_len):
                 row.append(marks[board[i][j]])
         heuristic_board.append(row)
     return heuristic_board
+
+def bot_suggestion(board, board_size, win_len, player):
+    return [greedy_best_first(board, board_size, win_len, heuristic, player, 3)]
