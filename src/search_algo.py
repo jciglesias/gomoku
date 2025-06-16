@@ -24,13 +24,9 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
 
     # Sort by heuristic descending
     move_objects.sort(key=lambda x: x.heuristic, reverse=True)
-    print("Possible moves with heuristics:")
-    for mv in move_objects:
-        print(f"Move: {mv.point}, Heuristic: {mv.heuristic}")
-
-    # Try moves in order of best heuristic; use alpha-beta to see if it's winning
     for mv in move_objects:
         test_board = make_move(board, mv.point[0], mv.point[1], player, empty_cell=0)
+        print(f"Testing move: {mv.point} with heuristic {mv.heuristic}")
         if minmax(test_board, player, -1, depth_limit - 1, board_size, win_len, heuristic):
             print(f"Chose move leading to win/safety: {mv.point}")
             return mv.point
@@ -44,37 +40,41 @@ def minmax(board, player, opponent, depth, board_size, win_len, heuristic):
         # Victory or safe enough
         return True
 
-    moves = get_possible_moves(board, empty_cell=0)
+    op_moves = get_possible_moves(board, empty_cell=0)
     # Heuristically prioritize moves
-    scored = []
-    for m in moves:
-        test_board = make_move(board, m[0], m[1], player, empty_cell=0)
-        score = heuristic(board_size, win_len, test_board, player)
-        scored.append((score, m))
-    scored.sort(reverse=True)
+    op_scored = []
+    for m in op_moves:
+        test_board = make_move(board, m[0], m[1], opponent, empty_cell=0)
+        score = heuristic(board_size, win_len, test_board, opponent)
+        op_scored.append((score, m))
+    op_scored.sort(reverse=True)
 
-    for _, move in scored[:3]:  # Only try top 3 moves for speed
-        test_board = make_move(board, move[0], move[1], player, empty_cell=0)
-        # Simulate opponent’s best response
-        opp_moves = get_possible_moves(test_board, empty_cell=0)
-        opp_scored = []
-        for om in opp_moves:
-            opp_board = make_move(test_board, om[0], om[1], opponent, empty_cell=0)
-            opp_score = heuristic(board_size, win_len, opp_board, opponent)
-            opp_scored.append((opp_score, om))
-        opp_scored.sort(reverse=True)
+    for _, op_move in op_scored[:3]:  # Only try top 3 moves for speed
+        test_board = make_move(board, op_move[0], op_move[1], opponent, empty_cell=0)
+        print(f"Opponent move: {op_move} with heuristic {heuristic(board_size, win_len, test_board, opponent)}")
+        if check_winner(test_board, empty_cell=0, board_size=board_size, win_len=win_len):
+            # If opponent can win, we must block
+            return False
+        moves = get_possible_moves(test_board, empty_cell=0)
+        scored = []
+        for m in moves:
+            board = make_move(test_board, m[0], m[1], player, empty_cell=0)
+            score = heuristic(board_size, win_len, board, player)
+            scored.append((score, m))
+        scored.sort(reverse=True)
 
-        if not opp_scored:
+        if not scored:
             continue
 
         # If opponent has a strong winning move, abandon path
-        for _, opp_move in opp_scored[:3]:
-            opp_board = make_move(test_board, opp_move[0], opp_move[1], opponent, empty_cell=0)
-            if check_winner(opp_board, empty_cell=0, board_size=board_size, win_len=win_len):
-                return False
+        for _, move in scored[:3]:
+            board = make_move(test_board, move[0], move[1], player, empty_cell=0)
+            print(f"Player move: {move} with heuristic {heuristic(board_size, win_len, board, player)}")
+            if check_winner(board, empty_cell=0, board_size=board_size, win_len=win_len):
+                return True
 
             # Try recursive lookahead
-            if minmax(opp_board, player, opponent, depth - 2, board_size, win_len, heuristic):
+            if minmax(board, player, opponent, depth - 2, board_size, win_len, heuristic):
                 return True
 
     return False
