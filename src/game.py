@@ -20,19 +20,23 @@ with st.sidebar:
     mode = st.radio("Game Mode", ["Player vs Player", "Player vs Bot"], horizontal=True, key="mode", on_change=change_board_size)
     if 'current_player' not in st.session_state:
         st.session_state.current_player = -1
-    l, r = st.columns(2)
-    l.toggle("Suggest Moves", key="suggest_moves", disabled=mode != "Player vs Player")
-    r.write("Current Player:")
-    r.markdown(marks[st.session_state.current_player])
+    sl, sr = st.columns(2)
+    sl.toggle("Suggest Moves", key="suggest_moves", disabled=mode != "Player vs Player")
+    sr.write("Current Player:")
+    sr.markdown(marks[st.session_state.current_player])
     board_size = st.slider("Board Size", 5, 20, 19, 1, on_change=change_board_size, key="board_size")
     win_len = st.slider("Winning Length", 3, 10, 5, 1, on_change=change_board_size, key="win_len")
     debug = st.checkbox("Debug Mode", value=False, key="debug")
-    if 'score' not in st.session_state:
-        st.session_state.score = {1: 0, -1: 0}
-    st.subheader("Score")
-    st.write(f"{marks[1]}: {st.session_state.score.get(1, 0)} vs {marks[-1]}: {st.session_state.score.get(-1, 0)}")
 
-st.title("Gomoku Game")
+if 'score' not in st.session_state:
+    st.session_state.score = {1: 0, -1: 0}
+l, r = st.columns(2)
+with r.container(border=True):
+    st.subheader("Score")
+    st.write(f"{marks[1]}: {st.session_state.score.get(1, 0)}")
+    st.write(f"{marks[-1]}: {st.session_state.score.get(-1, 0)}")
+
+l.title("Gomoku Game")
 
 if 'board' not in st.session_state:
     st.session_state.board = [[0 for _ in range(board_size)] for _ in range(board_size)]

@@ -31,11 +31,11 @@ def remove_captured(board, row, col, empty_cell, player):
 def make_move(board_og, row, col, player, empty_cell, score=None) -> list:
     board = deepcopy(board_og)
     is_capture = check_capture(board, row, col, empty_cell, player)
-    print(f"Check {row,col}",is_capture)
+    # print(f"Check {row,col}",is_capture)
     if board[row][col] == empty_cell:
         board[row][col] = player
         if is_capture:
-            print(f"Capture at {row,col}")
+            # print(f"Capture at {row,col}")
             board = remove_captured(board, row, col, empty_cell, player)
             if score is not None:
                 score[player] += 1
