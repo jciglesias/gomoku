@@ -35,6 +35,7 @@ help_board = st.session_state.board if not st.session_state.debug else get_heuri
 for i in range(board_size):
     cols = st.columns(board_size)
     for j in range(board_size):
+        # type_button = 
         if cols[j].button(
             marks[st.session_state.board[i][j]],
             type="secondary" if st.session_state.turn and st.session_state.last_move == (i, j) else "tertiary",

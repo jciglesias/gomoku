@@ -22,3 +22,16 @@ def get_heuristic_board(board, board_size, win_len):
                 row.append(marks[board[i][j]])
         heuristic_board.append(row)
     return heuristic_board
+
+def bot_suggestion(board, board_size, win_len):
+    player = 1
+    moves = get_possible_moves(board, empty_cell=0)
+    if not moves:
+        return None
+    scored_moves = []
+    for move in moves:
+        new_board = make_move(board, move[0], move[1], player, empty_cell=0)
+        score = heuristic(board_size, win_len, new_board, player)
+        scored_moves.append((score, move))
+    scored_moves.sort(reverse=True)
+    return scored_moves[0][1] if scored_moves else None
