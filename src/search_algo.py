@@ -1,6 +1,5 @@
 from src.utils import make_move, check_winner
 
-
 class move:
     point: tuple
     heuristic: int
@@ -78,7 +77,6 @@ def minmax(board, player, opponent, depth, board_size, win_len, heuristic):
 
     return False
 
-
 def is_terminal(board, empty_cell, win_len):
     if check_winner(board, empty_cell, len(board), win_len):
         return True
@@ -103,7 +101,3 @@ def get_possible_moves(board, empty_cell, radius=2):
 def first_move(board, player):
     moves = get_possible_moves(board, empty_cell=0, radius=1)
     return make_move(board, moves[0][0], moves[0][1], player, empty_cell=0) if moves else board
-
-
-
- 
