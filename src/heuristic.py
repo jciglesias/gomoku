@@ -83,7 +83,7 @@ def heuristic_diag(board_size, win_len, tab, player, reward):
                     if i < board_size and i - j < board_size:
                         if tab[i][i - j] == 0:
                             open += 1
-                    result -= reward[open][k]
+                    result -= reward[open][k] * 1.5
             else:
                 i += 1
         j += 1
