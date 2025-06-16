@@ -15,8 +15,8 @@ def get_heuristic_board(board, board_size, win_len):
         row = []
         for j in range(board_size):
             if board[i][j] == 0:
-                new_board = make_move(board, i, j, 1, 0)
-                h = heuristic(board_size, win_len, new_board, 1)
+                # new_board = make_move(board, i, j, 1, 0)
+                h = heuristic(board_size, win_len, board, 1, i, j)
                 row.append(str(h))
             else:
                 row.append(marks[board[i][j]])
