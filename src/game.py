@@ -13,6 +13,8 @@ def change_board_size():
         del st.session_state.last_move
     if 'turn' in st.session_state:
         del st.session_state.turn
+    if 'score' in st.session_state:
+        del st.session_state.score
 
 with st.sidebar:
     mode = st.radio("Game Mode", ["Player vs Player", "Player vs Bot"], horizontal=True, key="mode", on_change=change_board_size)
@@ -25,6 +27,10 @@ with st.sidebar:
     board_size = st.slider("Board Size", 5, 20, 19, 1, on_change=change_board_size, key="board_size")
     win_len = st.slider("Winning Length", 3, 10, 5, 1, on_change=change_board_size, key="win_len")
     debug = st.checkbox("Debug Mode", value=False, key="debug")
+    if 'score' not in st.session_state:
+        st.session_state.score = {1: 0, -1: 0}
+    st.subheader("Score")
+    st.write(f"{marks[1]}: {st.session_state.score.get(1, 0)} vs {marks[-1]}: {st.session_state.score.get(-1, 0)}")
 
 st.title("Gomoku Game")
 
@@ -53,13 +59,13 @@ for i in range(board_size):
             disabled=st.session_state.current_player == 1 and mode == "Player vs Bot"
             ):
             if check_valid_move(st.session_state.board, i, j, 0, st.session_state.current_player):
-                st.session_state.board = make_move(st.session_state.board, i, j, st.session_state.current_player, 0)
+                st.session_state.board = make_move(st.session_state.board, i, j, st.session_state.current_player, 0, st.session_state.score)
                 st.session_state.turn += 1
             else:
                 st.toast("Invalid move! Please try again.", icon="🚫")
                 continue
             w = check_winner(st.session_state.board, 0, board_size, win_len)
-            if w == 1:
+            if w == 1 or st.session_state.score[st.session_state.current_player] >= 5:
                 st.session_state.winner = st.session_state.current_player
                 st.session_state.board = reset_game(0, board_size)
                 st.session_state.current_player = -1
@@ -77,10 +83,10 @@ if st.session_state.current_player == 1 and mode == "Player vs Bot":
     start_time = perf_counter()
     st.session_state.last_move = bot_move(st.session_state.board, board_size, win_len, st.session_state.turn)
     end_time = perf_counter()
-    st.session_state.board = make_move(st.session_state.board, st.session_state.last_move[0], st.session_state.last_move[1], 1, 0)
+    st.session_state.board = make_move(st.session_state.board, st.session_state.last_move[0], st.session_state.last_move[1], 1, 0, st.session_state.score)
     st.session_state.bot_time = end_time - start_time
     w = check_winner(st.session_state.board, 0, board_size, win_len)
-    if w == 1:
+    if w == 1 or st.session_state.score[1] >= 5:
         st.session_state.winner = st.session_state.current_player
         st.session_state.board = reset_game(0, board_size)
         st.session_state.current_player = -1
