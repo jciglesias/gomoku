@@ -9,13 +9,19 @@ def change_board_size():
     st.session_state.current_player = -1
     if 'bot_time' in st.session_state:
         del st.session_state.bot_time
+    if 'last_move' in st.session_state:
+        del st.session_state.last_move
+    if 'turn' in st.session_state:
+        del st.session_state.turn
 
 with st.sidebar:
-    mode = st.radio("Game Mode", ["Player vs Player", "Player vs Bot"], horizontal=True, key="mode")
+    mode = st.radio("Game Mode", ["Player vs Player", "Player vs Bot"], horizontal=True, key="mode", on_change=change_board_size)
     if 'current_player' not in st.session_state:
         st.session_state.current_player = -1
-    st.write("Current Player:")
-    st.markdown(marks[st.session_state.current_player])
+    l, r = st.columns(2)
+    l.toggle("Suggest Moves", key="suggest_moves", disabled=mode != "Player vs Player")
+    r.write("Current Player:")
+    r.markdown(marks[st.session_state.current_player])
     board_size = st.slider("Board Size", 5, 20, 19, 1, on_change=change_board_size, key="board_size")
     win_len = st.slider("Winning Length", 3, 10, 5, 1, on_change=change_board_size, key="win_len")
     debug = st.checkbox("Debug Mode", value=False, key="debug")
@@ -26,6 +32,7 @@ if 'board' not in st.session_state:
     st.session_state.board = [[0 for _ in range(board_size)] for _ in range(board_size)]
 if 'turn' not in st.session_state:
     st.session_state.turn = 0
+if 'last_move' not in st.session_state:
     st.session_state.last_move = None
 
 if st.session_state.current_player == -1 and 'bot_time' in st.session_state:
@@ -33,7 +40,7 @@ if st.session_state.current_player == -1 and 'bot_time' in st.session_state:
     st.sidebar.write(f"Bot Time: {st.session_state.bot_time:.4f} seconds")
     del st.session_state.bot_time
 help_board = st.session_state.board if not st.session_state.debug else get_heuristic_board(st.session_state.board, board_size, win_len)
-points_suggested = bot_suggestion(st.session_state.board, board_size, win_len, st.session_state.current_player) if mode == "Player vs Player" else None
+points_suggested = bot_suggestion(st.session_state.board, board_size, win_len, st.session_state.current_player) if mode == "Player vs Player" and st.session_state.suggest_moves else None
 for i in range(board_size):
     cols = st.columns(board_size)
     for j in range(board_size):
@@ -87,9 +94,5 @@ if st.session_state.current_player == 1 and mode == "Player vs Bot":
         st.rerun()
 
 with st.sidebar:
-    if st.button("Reset Game", disabled=st.session_state.current_player == 1 and mode == "Player vs Bot"):
-        st.session_state.board = reset_game(0, board_size)
-        st.session_state.current_player = -1
-        if 'bot_time' in st.session_state:
-            del st.session_state.bot_time
+    if st.button("Reset Game", disabled=st.session_state.current_player == 1 and mode == "Player vs Bot", on_click=change_board_size):
         st.rerun()

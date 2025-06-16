@@ -24,14 +24,4 @@ def get_heuristic_board(board, board_size, win_len):
     return heuristic_board
 
 def bot_suggestion(board, board_size, win_len, player):
-    moves = get_possible_moves(board, empty_cell=0, radius=1)
-    scored = []
-    for m in moves:
-        test_board = make_move(board, m[0], m[1], player, empty_cell=0)
-        score = heuristic(board_size, win_len, test_board, player)
-        scored.append((score, m))
-    scored.sort(reverse=True)
-    
-    if scored:
-        return [move for _, move in scored[:1]]
-    return None
+    return [greedy_best_first(board, board_size, win_len, heuristic, player, 3)]

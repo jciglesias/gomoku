@@ -46,3 +46,5 @@ def get_button_type(last_move, i, j, suggestion=None):
         return "secondary"
     return "tertiary"
 
+def check_empty_board(board, empty_cell):
+    return all(cell == empty_cell for row in board for cell in row)
