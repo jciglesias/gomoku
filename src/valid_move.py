@@ -13,7 +13,6 @@ def check_column(board_size, win_len, tab, player, row, col):
                         lap = 0
                         valid = 0
                         while k < win_len and j < board_size and tab[j][i] != -player and lap < 2:
-                            # print(f"i,j = {i} {j} => {tab[j][i]}")
                             if i == row and j == col:
                                 valid = 1
                             if tab[j][i] == player:
@@ -46,7 +45,6 @@ def check_diag(board_size, win_len, tab, player, row, col):
                             lap = 0
                             valid = 0
                             while k < win_len and i < min(board_size, j + board_size) and tab[i][i - j] != -player and lap < 2:
-                                # print(f"i,i-j = {i} {i - j} => {tab[i][i - j]}")
                                 if i == row and i - j == col:
                                     valid = 1
                                 if tab[i][i - j] == player:
@@ -70,13 +68,9 @@ def check_threes(board, player, row, col):
     tab = np.array(board)
     tab[row][col] = player
     res = check_column(len(board), 3, tab, player, col, row)
-    # print(f"Check double threes 1 {res}")
     res += check_column(len(board), 3, tab.transpose(), player, row, col)
-    # print(f"Check double threes 2 {res}")
     res += check_diag(len(board), 3, tab, player, row, col)
-    # print(f"Check double threes 3 {res}")
     res += check_diag(len(board), 3, np.rot90(tab, k = 1), player, len(board) - 1 - col, row)
-    # print(f"Check double threes 4 {res}")
     return (res >= 2)
 
 def check_valid_move(board, row, col, empty_cell, player,  game_rules):
