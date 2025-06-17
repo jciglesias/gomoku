@@ -17,8 +17,8 @@
 - [X] Implementer la capture (suppression de pion)
 - [X] Implementer la victoire par capture
   - necessite d'envoyer a la fonction la position du dernier move + le compte de capture pour le bot et le player
-- [ ] Implementer une visualisation des scores de la fonction heuristique par case (depth 1)
-- [ ] Implementer une visualisation des scores de la fonction heuristique par case (depth 1 a 10)
+- [X] Implementer une visualisation des scores de la fonction heuristique par case (depth 1)
+- [X] Implementer une visualisation des scores de la fonction heuristique par case (depth 1 a 10)
 - [X] Suggestion de coup pour le mode local (deux joueurs humains)
 
 

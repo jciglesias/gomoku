@@ -2,12 +2,12 @@ from src.search_algo import *
 from src.utils import *
 from src.heuristic import heuristic
 
-def bot_move(board, board_size, win_len, turn, score):
+def bot_move(board, board_size, win_len, turn, score, debug):
     depth = 10
     player = 1
     if turn == 1:
         return first_move(board, player)
-    return greedy_best_first(board, board_size, win_len, heuristic,  player, depth, score)
+    return greedy_best_first(board, board_size, win_len, heuristic,  player, depth, score, debug)
 
 def get_heuristic_board(board, board_size, win_len):
     heuristic_board = []
@@ -23,5 +23,5 @@ def get_heuristic_board(board, board_size, win_len):
         heuristic_board.append(row)
     return heuristic_board
 
-def bot_suggestion(board, board_size, win_len, player):
-    return [greedy_best_first(board, board_size, win_len, heuristic, player, 3)]
+def bot_suggestion(board, board_size, win_len, player, score, debug):
+    return [greedy_best_first(board, board_size, win_len, heuristic, player, 3, score, debug)]
