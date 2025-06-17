@@ -42,79 +42,79 @@ pattern_scores = [
     ('YXXxX_', 100000),   # 4 blocked
     ('YXXXx_', 100000),   # 4 blocked
 
-    ('Yx_XXX_', 100000),   # 4 blocked with gap
-    ('YX_xXX_', 100000),   # 4 blocked with gap
-    ('YX_XxX_', 100000),   # 4 blocked with gap
-    ('YX_XXx_', 100000),   # 4 blocked with gap
+    ('Yx_XXX_', 90000),   # 4 blocked with gap
+    ('YX_xXX_', 90000),   # 4 blocked with gap
+    ('YX_XxX_', 90000),   # 4 blocked with gap
+    ('YX_XXx_', 90000),   # 4 blocked with gap
 
-    ('YxX_XX_', 100000),   # 4 blocked with gap
-    ('YXx_XX_', 100000),   # 4 blocked with gap
-    ('YXX_xX_', 100000),   # 4 blocked with gap
-    ('YXX_Xx_', 100000),   # 4 blocked with gap
+    ('YxX_XX_', 90000),   # 4 blocked with gap
+    ('YXx_XX_', 90000),   # 4 blocked with gap
+    ('YXX_xX_', 90000),   # 4 blocked with gap
+    ('YXX_Xx_', 90000),   # 4 blocked with gap
 
-    ('YxXX_X_', 100000),   # 4 blocked with gap
-    ('YXxX_X_', 100000),   # 4 blocked with gap
-    ('YXXx_X_', 100000),   # 4 blocked with gap
-    ('YXXX_x_', 100000),   # 4 blocked with gap
+    ('YxXX_X_', 90000),   # 4 blocked with gap
+    ('YXxX_X_', 90000),   # 4 blocked with gap
+    ('YXXx_X_', 90000),   # 4 blocked with gap
+    ('YXXX_x_', 90000),   # 4 blocked with gap
 
     ('_xXXXY', 100000),   # 4 blocked
     ('_XxXXY', 100000),   # 4 blocked
     ('_XXxXY', 100000),   # 4 blocked
     ('_XXXxY', 100000),   # 4 blocked
 
-    ('_x_XXXY', 100000),   # 4 blocked with gap
-    ('_X_xXXY', 100000),   # 4 blocked with gap
-    ('_X_XxXY', 100000),   # 4 blocked with gap
-    ('_X_XXxY', 100000),   # 4 blocked with gap
+    ('_x_XXXY', 90000),   # 4 blocked with gap
+    ('_X_xXXY', 90000),   # 4 blocked with gap
+    ('_X_XxXY', 90000),   # 4 blocked with gap
+    ('_X_XXxY', 90000),   # 4 blocked with gap
 
-    ('_xX_XXY', 100000),   # 4 blocked with gap
-    ('_Xx_XXY', 100000),   # 4 blocked with gap
-    ('_XX_xXY', 100000),   # 4 blocked with gap
-    ('_XX_XxY', 100000),   # 4 blocked with gap
+    ('_xX_XXY', 90000),   # 4 blocked with gap
+    ('_Xx_XXY', 90000),   # 4 blocked with gap
+    ('_XX_xXY', 90000),   # 4 blocked with gap
+    ('_XX_XxY', 90000),   # 4 blocked with gap
 
-    ('_xXX_XY', 100000),   # 4 blocked with gap
-    ('_XxX_XY', 100000),   # 4 blocked with gap
-    ('_XXx_XY', 100000),   # 4 blocked with gap
-    ('_XXX_xY', 100000),   # 4 blocked with gap
+    ('_xXX_XY', 90000),   # 4 blocked with gap
+    ('_XxX_XY', 90000),   # 4 blocked with gap
+    ('_XXx_XY', 90000),   # 4 blocked with gap
+    ('_XXX_xY', 90000),   # 4 blocked with gap
 
     ('_xXX_',  10000),   # 3 opened
     ('_XxX_',  10000),   # 3 opened
     ('_XXx_',  10000),   # 3 opened
 
-    ('_x_XX_',  10000),   # 3 opened with gap
-    ('_X_xX_',  10000),   # 3 opened with gap
-    ('_X_Xx_',  10000),   # 3 opened with gap
-    ('_xX_X_',  10000),   # 3 opened with gap
-    ('_Xx_X_',  10000),   # 3 opened with gap
-    ('_XX_x_',  10000),   # 3 opened with gap
+    ('_x_XX_',  9000),   # 3 opened with gap
+    ('_X_xX_',  9000),   # 3 opened with gap
+    ('_X_Xx_',  9000),   # 3 opened with gap
+    ('_xX_X_',  9000),   # 3 opened with gap
+    ('_Xx_X_',  9000),   # 3 opened with gap
+    ('_XX_x_',  9000),   # 3 opened with gap
 
     ('YxXX_',  1000),   # 3 blocked
     ('YXxX_',  1000),   # 3 blocked
     ('YXXx_',  1000),   # 3 blocked
 
-    ('Yx_XX_',  1000),   # 3 blocked with gap
-    ('YX_xX_',  1000),   # 3 blocked with gap
-    ('YX_Xx_',  1000),   # 3 blocked with gap
-    ('YxX_X_',  1000),   # 3 blocked with gap
-    ('YXx_X_',  1000),   # 3 blocked with gap
-    ('YXX_x_',  1000),   # 3 blocked with gap
+    ('Yx_XX_',  900),   # 3 blocked with gap
+    ('YX_xX_',  900),   # 3 blocked with gap
+    ('YX_Xx_',  900),   # 3 blocked with gap
+    ('YxX_X_',  900),   # 3 blocked with gap
+    ('YXx_X_',  900),   # 3 blocked with gap
+    ('YXX_x_',  900),   # 3 blocked with gap
 
     ('_xXXY',  1000),   # 3 blocked
     ('_XxXY',  1000),   # 3 blocked
     ('_XXxY',  1000),   # 3 blocked
 
-    ('_x_XXY',  1000),   # 3 blocked with gap
-    ('_X_xXY',  1000),   # 3 blocked with gap
-    ('_X_XxY',  1000),   # 3 blocked with gap
-    ('_xX_XY',  1000),   # 3 blocked with gap
-    ('_Xx_XY',  1000),   # 3 blocked with gap
-    ('_XX_xY',  1000),   # 3 blocked with gap
+    ('_x_XXY',  900),   # 3 blocked with gap
+    ('_X_xXY',  900),   # 3 blocked with gap
+    ('_X_XxY',  900),   # 3 blocked with gap
+    ('_xX_XY',  900),   # 3 blocked with gap
+    ('_Xx_XY',  900),   # 3 blocked with gap
+    ('_XX_xY',  900),   # 3 blocked with gap
 
     ('_Xx_',   100),   # 2 opened
     ('_Xx_',   100),   # 2 opened
 
-    ('_X_x_',   100),   # 2 opened with gap
-    ('_X_x_',   100),   # 2 opened with gap
+    ('_X_x_',   90),   # 2 opened with gap
+    ('_X_x_',   90),   # 2 opened with gap
 
     ('YXx_',   10),    # 2 blocked
     ('YxX_',   10),    # 2 blocked
