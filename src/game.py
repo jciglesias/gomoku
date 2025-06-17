@@ -5,7 +5,7 @@ from src.valid_move import check_valid_move
 from time import perf_counter
 
 def change_board_size():
-    st.session_state.board = reset_game(0, st.session_state.board_size)
+    st.session_state.board = reset_game(0, st.session_state.board_size, st.session_state.game_type)
     st.session_state.current_player = -1
     if 'bot_time' in st.session_state:
         del st.session_state.bot_time
@@ -20,10 +20,7 @@ with st.sidebar:
     mode = st.radio("Game Mode", ["Player vs Player", "Player vs Bot"], horizontal=True, key="mode", on_change=change_board_size)
     if 'current_player' not in st.session_state:
         st.session_state.current_player = -1
-    sl, sr = st.columns(2)
-    sl.toggle("Suggest Moves", key="suggest_moves", disabled=mode != "Player vs Player")
-    sr.write("Current Player:")
-    sr.markdown(marks[st.session_state.current_player])
+    st.toggle("Suggest Moves", key="suggest_moves", disabled=mode != "Player vs Player")
     board_size = st.slider("Board Size", 5, 20, 19, 1, on_change=change_board_size, key="board_size")
     win_len = st.slider("Winning Length", 3, 10, 5, 1, on_change=change_board_size, key="win_len")
     debug = st.checkbox("Debug Mode", value=False, key="debug")
@@ -32,16 +29,20 @@ with st.sidebar:
 
 if 'score' not in st.session_state:
     st.session_state.score = {1: 0, -1: 0}
-l, r = st.columns(2)
+l, m, r = st.columns(3)
+with l.container(border=True):
+    st.subheader("Current Player:") 
+    st.markdown(marks[st.session_state.current_player])
 with r.container(border=True):
     st.subheader("Score")
-    st.write(f"{marks[1]}: {st.session_state.score.get(1, 0)}")
-    st.write(f"{marks[-1]}: {st.session_state.score.get(-1, 0)}")
+    cl, cr = st.columns(2)
+    cl.write(f"{marks[1]}: {st.session_state.score.get(1, 0)}")
+    cr.write(f"{marks[-1]}: {st.session_state.score.get(-1, 0)}")
 
-l.title("Gomoku Game")
+m.title("Gomoku Game")
 
 if 'board' not in st.session_state:
-    st.session_state.board =  reset_game(0, board_size)
+    st.session_state.board =  reset_game(0, board_size, type_of_start)
 if 'turn' not in st.session_state:
     st.session_state.turn = 0
 if 'last_move' not in st.session_state:
@@ -73,11 +74,11 @@ for i in range(board_size):
             w = check_winner(st.session_state.board, 0, board_size, win_len)
             if w == 1 or st.session_state.score[st.session_state.current_player] >= 5:
                 st.session_state.winner = st.session_state.current_player
-                st.session_state.board = reset_game(0, board_size)
+                st.session_state.board = reset_game(0, board_size, type_of_start)
                 st.session_state.current_player = -1
                 st.switch_page("src/gameover.py")
             elif w == -1:
-                st.session_state.board = reset_game(0, board_size)
+                st.session_state.board = reset_game(0, board_size, type_of_start)
                 st.session_state.current_player = -1
                 st.switch_page("src/gameover.py")
             st.session_state.current_player *= -1
@@ -94,11 +95,11 @@ if st.session_state.current_player == 1 and mode == "Player vs Bot":
     w = check_winner(st.session_state.board, 0, board_size, win_len)
     if w == 1 or st.session_state.score[1] >= 5:
         st.session_state.winner = st.session_state.current_player
-        st.session_state.board = reset_game(0, board_size)
+        st.session_state.board = reset_game(0, board_size, type_of_start)
         st.session_state.current_player = -1
         st.switch_page("src/gameover.py")
     elif w == -1:
-        st.session_state.board = reset_game(0, board_size)
+        st.session_state.board = reset_game(0, board_size, type_of_start)
         st.session_state.current_player = -1
         st.switch_page("src/gameover.py")
     else:
