@@ -9,7 +9,7 @@ marks = {
 
 def remove_captured(board, row, col, empty_cell, player):
     directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
-
+    count_captured = 0
     # Check all 8 directions for a capture
     for dr, dc in directions:
         r, c = row + dr, col + dc
@@ -23,10 +23,11 @@ def remove_captured(board, row, col, empty_cell, player):
                         r3, c3 = r2 + dr, c2 + dc
                         if 0 <= r3 < len(board) and 0 <= c3 < len(board):
                             if board[r3][c3] == player:
+                                count_captured += 1
                                 # Remove the captured pieces
                                 board[r][c] = empty_cell
                                 board[r2][c2] = empty_cell
-    return board
+    return board, count_captured
 
 def make_move(board_og, row, col, player, empty_cell, score=None) -> list:
     board = deepcopy(board_og)
@@ -36,9 +37,9 @@ def make_move(board_og, row, col, player, empty_cell, score=None) -> list:
         board[row][col] = player
         if is_capture:
             # print(f"Capture at {row,col}")
-            board = remove_captured(board, row, col, empty_cell, player)
+            board, n_captures = remove_captured(board, row, col, empty_cell, player)
             if score is not None:
-                score[player] += 1
+                score[player] +=  n_captures
     del board_og
     return board
 
