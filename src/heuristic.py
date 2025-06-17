@@ -45,7 +45,7 @@ def heuristic_row(board_size, win_len, tab, player, reward):
                 if j < board_size:
                     if tab[j][i] == 0:
                         open += 1
-                result -= reward[open][k]
+                result -= reward[open][k] * 1.5
             else:
                 j += 1
         i += 1
@@ -93,7 +93,7 @@ def heuristic_capture(tab, player, row, col, g_score, reward_capture):
     if check_alignement_capture(tab, row, col, player):
         res += reward_capture[g_score[player]]
     if check_alignement_capture(tab, row, col, -player):
-        res -= reward_capture[g_score[-player]] + 200
+        res -= reward_capture[g_score[-player]] + 1
     return res
 
 def heuristic(board_size, win_len, tab, player, row, col, g_score):
@@ -103,7 +103,7 @@ def heuristic(board_size, win_len, tab, player, row, col, g_score):
     reward_closed[win_len] = 10**(win_len)
     reward_open1[win_len] = 10**(win_len)
     reward = [reward_closed, reward_open1, reward_open2]
-    reward_capture = [100 + 10**(i+1) for i in range(5)]
+    reward_capture = [10 + (i+1) for i in range(5)]
     reward_capture[4] = 10**(win_len)
     tab = np.array(tab)
     res = heuristic_capture(tab, player, row, col, g_score, reward_capture)
