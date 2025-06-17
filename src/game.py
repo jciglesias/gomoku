@@ -49,7 +49,7 @@ if st.session_state.current_player == -1 and 'bot_time' in st.session_state:
     st.toast(f"Bot made a move in {st.session_state.bot_time:.4f} seconds", icon="🤖")
     st.sidebar.write(f"Bot Time: {st.session_state.bot_time:.4f} seconds")
     del st.session_state.bot_time
-help_board = st.session_state.board if not st.session_state.debug else get_heuristic_board(st.session_state.board, board_size, win_len)
+# help_board = st.session_state.board if not st.session_state.debug else get_heuristic_board(st.session_state.board, board_size, win_len)
 points_suggested = bot_suggestion(st.session_state.board, board_size, win_len, st.session_state.current_player) if mode == "Player vs Player" and st.session_state.suggest_moves else None
 for i in range(board_size):
     cols = st.columns(board_size)
@@ -85,7 +85,7 @@ for i in range(board_size):
             st.rerun()
 if st.session_state.current_player == 1 and mode == "Player vs Bot":
     start_time = perf_counter()
-    st.session_state.last_move = bot_move(st.session_state.board, board_size, win_len, st.session_state.turn)
+    st.session_state.last_move = bot_move(st.session_state.board, board_size, win_len, st.session_state.turn, st.session_state.score)
     end_time = perf_counter()
     st.session_state.board = make_move(st.session_state.board, st.session_state.last_move[0], st.session_state.last_move[1], 1, 0, st.session_state.score)
     st.session_state.bot_time = end_time - start_time
