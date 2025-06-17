@@ -61,7 +61,7 @@ def remove_captured(board, row, col, empty_cell, player):
                                 board[r2][c2] = empty_cell
     return board, count_captured
 
-def make_move(board_og, row, col, player, empty_cell, score=None, game_rules=None) -> list:
+def make_move(board_og, row, col, player, empty_cell, score=None, game_rules=[]) -> list:
     board = deepcopy(board_og)
     is_capture = check_capture(board, row, col, empty_cell, player)
     # print(f"Check {row,col}",is_capture)
