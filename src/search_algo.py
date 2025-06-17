@@ -7,7 +7,7 @@ class move:
     def __init__(self, point):
         self.point = point
 
-def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit=10):
+def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit=10, score=None):
 
     moves = get_possible_moves(board, empty_cell=0)
     if not moves and check_empty_board(board, empty_cell=0):
@@ -17,7 +17,7 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
     # Score all possible moves using the heuristic
     for m in moves:
         new_board = make_move(board, m[0], m[1], player, empty_cell=0)
-        h = heuristic(board_size, win_len, new_board, player)
+        h = heuristic(board_size, win_len, new_board, player, m[0], m[1], score)
         mv = move(m)
         mv.heuristic = h
         move_objects.append(mv)
@@ -27,7 +27,7 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
     for mv in move_objects:
         test_board = make_move(board, mv.point[0], mv.point[1], player, empty_cell=0)
         print(f"Testing move: {mv.point} with heuristic {mv.heuristic}")
-        if minmax(test_board, player, -1, depth_limit - 1, board_size, win_len, heuristic):
+        if minmax(test_board, player, -1, depth_limit - 1, board_size, win_len, heuristic, score):
             print(f"Chose move leading to win/safety: {mv.point}")
             return mv.point
 
@@ -35,7 +35,7 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
     best = move_objects[0]
     return best.point if best else None
     
-def minmax(board, player, opponent, depth, board_size, win_len, heuristic):
+def minmax(board, player, opponent, depth, board_size, win_len, heuristic, g_score):
     if depth <= 0 or check_winner(board, empty_cell=0, board_size=board_size, win_len=win_len):
         # Victory or safe enough
         return True
@@ -45,13 +45,13 @@ def minmax(board, player, opponent, depth, board_size, win_len, heuristic):
     op_scored = []
     for m in op_moves:
         test_board = make_move(board, m[0], m[1], opponent, empty_cell=0)
-        score = heuristic(board_size, win_len, test_board, opponent)
+        score = heuristic(board_size, win_len, test_board, opponent, m[0], m[1], g_score)
         op_scored.append((score, m))
     op_scored.sort(reverse=True)
 
-    for _, op_move in op_scored[:3]:  # Only try top 3 moves for speed
+    for op_h, op_move in op_scored[:3]:  # Only try top 3 moves for speed
         test_board = make_move(board, op_move[0], op_move[1], opponent, empty_cell=0)
-        print(f"Opponent move: {op_move} with heuristic {heuristic(board_size, win_len, test_board, opponent)}")
+        print(f"Opponent move: {op_move} with heuristic {op_h}")
         if check_winner(test_board, empty_cell=0, board_size=board_size, win_len=win_len):
             # If opponent can win, we must block
             return False
@@ -59,7 +59,7 @@ def minmax(board, player, opponent, depth, board_size, win_len, heuristic):
         scored = []
         for m in moves:
             board = make_move(test_board, m[0], m[1], player, empty_cell=0)
-            score = heuristic(board_size, win_len, board, player)
+            score = heuristic(board_size, win_len, board, player, m[0], m[1], g_score)
             scored.append((score, m))
         scored.sort(reverse=True)
 
@@ -67,14 +67,14 @@ def minmax(board, player, opponent, depth, board_size, win_len, heuristic):
             continue
 
         # If opponent has a strong winning move, abandon path
-        for _, move in scored[:3]:
+        for b_h, move in scored[:3]:
             board = make_move(test_board, move[0], move[1], player, empty_cell=0)
-            print(f"Player move: {move} with heuristic {heuristic(board_size, win_len, board, player)}")
+            print(f"Player move: {move} with heuristic {b_h}")
             if check_winner(board, empty_cell=0, board_size=board_size, win_len=win_len):
                 return True
 
             # Try recursive lookahead
-            if minmax(board, player, opponent, depth - 2, board_size, win_len, heuristic):
+            if minmax(board, player, opponent, depth - 2, board_size, win_len, heuristic, g_score):
                 return True
 
     return False

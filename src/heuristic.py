@@ -89,7 +89,7 @@ def heuristic_diag(board_size, win_len, tab, player, reward):
         j += 1
     return result
 
-def heuristic(board_size, win_len, tab, player):
+def heuristic(board_size, win_len, tab, player, row, col, g_score):
     reward_closed = [0] * (win_len + 1)
     reward_open1 = [0] + [0] + [10**i for i in range(-2, win_len, 2)]
     reward_open2 = [0] + [0] + [10**i for i in range(-1, win_len + 1, 2)]
