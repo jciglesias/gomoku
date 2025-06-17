@@ -121,12 +121,13 @@ def get_reward(win_len):
     reward_capture[4] = 10**(win_len)
     return reward, reward_capture
 
-def heuristic(board_size, win_len, tab, player, row, col, g_score):
+def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["Capture", "Double Three"]):
     reward, reward_capture = get_reward(win_len)
     tab = np.array(tab)
-    res = heuristic_capture(tab, player, row, col, g_score, reward_capture)
-    res += heuristic_row(board_size, win_len, tab, player, reward)
+    res = heuristic_row(board_size, win_len, tab, player, reward)
     res += heuristic_row(board_size, win_len, tab.transpose(), player, reward)
     res += heuristic_diag(board_size, win_len, tab, player, reward)
     res += heuristic_diag(board_size, win_len, np.rot90(tab, k = 1), player, reward)
+    if 'Capture' in game_rules:
+        res += heuristic_capture(tab, player, row, col, g_score, reward_capture)
     return res
