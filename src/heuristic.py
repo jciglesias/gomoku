@@ -28,9 +28,20 @@ def heuristic_row(board_size, win_len, tab, player, reward):
                     if tab[j - 1][i] == 0:
                         open = 1
                 k = 0
-                while k < win_len and j < board_size and tab[j][i] == -player:
-                    k += 1
-                    j += 1
+                lap = 0
+                while k < win_len and j < board_size and tab[j][i] != player and lap < 2:
+                    if tab[j][i] == -player:
+                        k += 1
+                        j += 1
+                    else:
+                        lap += 1
+                        if j + 1 < board_size:
+                            if tab[j + 1][i] == -player and lap == 1:
+                                j += 1
+                            else:
+                                break
+                        else:
+                            break
                 if j < board_size:
                     if tab[j][i] == 0:
                         open += 1
@@ -52,7 +63,8 @@ def heuristic_diag(board_size, win_len, tab, player, reward):
                         if tab[i - 1][i - 1 - j] == 0:
                             open = 1
                     k = 0
-                    while k < win_len and i < min(board_size, j + board_size) and tab[i][i - j] == player:
+                    min_board = min(board_size, j + board_size)
+                    while k < win_len and i < min_board and tab[i][i - j] == player:
                         k += 1
                         i += 1
                     if i < board_size and i - j < board_size:
@@ -65,9 +77,21 @@ def heuristic_diag(board_size, win_len, tab, player, reward):
                         if tab[i - 1][i - 1 - j] == 0:
                             open = 1
                     k = 0
-                    while k < win_len and i < min(board_size, j + board_size) and tab[i][i - j] == -player:
-                        k += 1
-                        i += 1
+                    lap = 0
+                    min_board = min(board_size, j + board_size)
+                    while k < win_len and i < min_board and tab[i][i - j] != player and lap < 2:
+                        if tab[i][i - j] == -player:
+                            k += 1
+                            i += 1
+                        else:
+                            lap += 1
+                            if i + 1 < min_board:
+                                if tab[i + 1][i + 1 - j] == -player and lap == 1:
+                                    i += 1
+                                else:
+                                    break
+                            else:
+                                break
                     if i < board_size and i - j < board_size:
                         if tab[i][i - j] == 0:
                             open += 1
