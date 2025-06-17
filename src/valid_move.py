@@ -1,4 +1,5 @@
 import numpy as np
+from src.utils import *
 
 def check_column(board_size, win_len, tab, player, row, col):
     i = 0
@@ -77,6 +78,6 @@ def check_valid_move(board, row, col, empty_cell, player,  game_rules):
     if board[row][col] != empty_cell:
         return False
     # check if the move creates a double-three
-    if 'Double Three' in game_rules and check_threes(board, player, row, col):
+    if 'Double Three' in game_rules and not check_capture(board, row, col, 0, player) and check_threes(board, player, row, col):
         return False
     return True
