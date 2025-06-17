@@ -24,9 +24,10 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
 
     # Sort by heuristic descending
     move_objects.sort(key=lambda x: x.heuristic, reverse=True)
+    # print(f"Possible moves {[x.point for x in move_objects]} with heuristics {[x.heuristic for x in move_objects]}")
     for mv in move_objects:
         test_board = make_move(board, mv.point[0], mv.point[1], player, empty_cell=0)
-        print(f"Testing move: {mv.point} with heuristic {mv.heuristic}")
+        print(f"First level branch: {mv.point} with heuristic {mv.heuristic}")
         if minmax(test_board, player, -1, depth_limit - 1, board_size, win_len, heuristic, score):
             print(f"Chose move leading to win/safety: {mv.point}")
             return mv.point
@@ -37,6 +38,7 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
     
 def minmax(board, player, opponent, depth, board_size, win_len, heuristic, g_score):
     if depth <= 0 or check_winner(board, empty_cell=0, board_size=board_size, win_len=win_len):
+        print(f"Reached level {10 - depth} or found winner")
         # Victory or safe enough
         return True
 
@@ -51,7 +53,7 @@ def minmax(board, player, opponent, depth, board_size, win_len, heuristic, g_sco
 
     for op_h, op_move in op_scored[:3]:  # Only try top 3 moves for speed
         test_board = make_move(board, op_move[0], op_move[1], opponent, empty_cell=0)
-        print(f"Opponent move: {op_move} with heuristic {op_h}")
+        print(f"Level {10-depth} opponent move: {op_move} with heuristic {op_h}")
         if check_winner(test_board, empty_cell=0, board_size=board_size, win_len=win_len):
             # If opponent can win, we must block
             return False
@@ -69,7 +71,7 @@ def minmax(board, player, opponent, depth, board_size, win_len, heuristic, g_sco
         # If opponent has a strong winning move, abandon path
         for b_h, move in scored[:3]:
             board = make_move(test_board, move[0], move[1], player, empty_cell=0)
-            print(f"Player move: {move} with heuristic {b_h}")
+            print(f"Level {11-depth} bot move: {move} with heuristic {b_h}")
             if check_winner(board, empty_cell=0, board_size=board_size, win_len=win_len):
                 return True
 
