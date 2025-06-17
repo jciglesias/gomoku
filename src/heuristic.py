@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
 import time
-
-
+from src.utils import check_alignement_capture
 
 def check_direction(board_size, win_len, tab, player, row, col, delta_row, delta_col):
     count = 0
@@ -89,6 +88,14 @@ def heuristic_diag(board_size, win_len, tab, player, reward):
         j += 1
     return result
 
+def heuristic_capture(tab, player, row, col, g_score, reward_capture):
+    res = 0
+    if check_alignement_capture(tab, row, col, player):
+        res += reward_capture[g_score[player]]
+    if check_alignement_capture(tab, row, col, -player):
+        res -= reward_capture[g_score[-player]]
+    return res
+
 def heuristic(board_size, win_len, tab, player, row, col, g_score):
     reward_closed = [0] * (win_len + 1)
     reward_open1 = [0] + [0] + [10**i for i in range(-2, win_len, 2)]
@@ -96,8 +103,11 @@ def heuristic(board_size, win_len, tab, player, row, col, g_score):
     reward_closed[win_len] = 10**(win_len)
     reward_open1[win_len] = 10**(win_len)
     reward = [reward_closed, reward_open1, reward_open2]
+    reward_capture = [100 + 10**(i+1) for i in range(5)]
+    reward_capture[4] = 10**(win_len)
     tab = np.array(tab)
-    res = heuristic_row(board_size, win_len, tab, player, reward)
+    res = heuristic_capture(tab, player, row, col, g_score, reward_capture)
+    res += heuristic_row(board_size, win_len, tab, player, reward)
     res += heuristic_row(board_size, win_len, tab.transpose(), player, reward)
     res += heuristic_diag(board_size, win_len, tab, player, reward)
     res += heuristic_diag(board_size, win_len, np.rot90(tab, k = 1), player, reward)

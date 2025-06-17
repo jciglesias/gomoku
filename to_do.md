@@ -29,4 +29,6 @@
 - [ ] Se renseigner sur les starting conditions (Standard, Pro, Swap, Swap2...)
 - [ ] Possibilite de commencer ou non
 - [ ] Revenir en arriere ?
+- [ ] Importer / Exporter un jeu
+- [ ] Hint button : alerte  3 / 4 et capture
 

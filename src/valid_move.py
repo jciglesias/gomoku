@@ -1,15 +1,5 @@
 import numpy as np
 
-directions = [(-1, -1),
-            (-1, 0),
-            (-1, 1),
-            (0, -1),
-            (0, 1),
-            (1, -1),
-            (1, 0),
-            (1, 1)
-            ]
-
 def check_column(board_size, win_len, tab, player):
     i = 0
     result = 0
@@ -77,30 +67,10 @@ def check_threes(board, row, col, empty_cell, player):
     res += check_diag(len(board), 3, np.rot90(tab, k = 1), player)
     return (res >= 2)
 
-def check_capture(board, row, col, empty_cell, player):
-    # Check if the move captures exactly two opponent pieces
-    if board[row][col] != empty_cell:
-        return False
-    # Check all 8 directions for a capture
-    for dr, dc in directions:
-        r, c = row + dr, col + dc
-        if 0 <= r < len(board) and 0 <= c < len(board):
-            if board[r][c] == -player:  # Found an opponent piece
-                # search in the same direction for another opponent piece
-                r2, c2 = r + dr, c + dc
-                if 0 <= r2 < len(board) and 0 <= c2 < len(board):
-                    if board[r2][c2] == -player:
-                        # check if the next cell in the same direction is player's piece
-                        r3, c3 = r2 + dr, c2 + dc
-                        if 0 <= r3 < len(board) and 0 <= c3 < len(board):
-                            if board[r3][c3] == player:
-                                return True
-    return False
-
 def check_valid_move(board, row, col, empty_cell, player):
     if board[row][col] != empty_cell:
         return False
     # check if the move creates a double-three
-    # if check_threes(board, row, col, empty_cell, player):
-    #     return False
+    if check_threes(board, row, col, empty_cell, player):
+        return False
     return True
