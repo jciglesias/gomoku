@@ -67,10 +67,10 @@ def check_threes(board, row, col, empty_cell, player):
     res += check_diag(len(board), 3, np.rot90(tab, k = 1), player)
     return (res >= 2)
 
-def check_valid_move(board, row, col, empty_cell, player):
+def check_valid_move(board, row, col, empty_cell, player,  game_rules):
     if board[row][col] != empty_cell:
         return False
     # check if the move creates a double-three
-    # if check_threes(board, row, col, empty_cell, player):
-    #     return False
+    if 'Double Three' in game_rules and check_threes(board, row, col, empty_cell, player):
+        return False
     return True

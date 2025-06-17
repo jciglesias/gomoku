@@ -28,6 +28,7 @@ with st.sidebar:
     win_len = st.slider("Winning Length", 3, 10, 5, 1, on_change=change_board_size, key="win_len")
     debug = st.checkbox("Debug Mode", value=False, key="debug")
     type_of_start = st.radio('Choose type of start', ['Classic', 'Pro', 'Long Pro', 'Swap', 'Swap2'], horizontal=True, key="game_type", on_change=change_board_size)
+    game_rules = st.multiselect("Game Rules", ["Capture", "Double Three"], default=["Capture", "Double Three"])
 
 if 'score' not in st.session_state:
     st.session_state.score = {1: 0, -1: 0}
@@ -63,8 +64,8 @@ for i in range(board_size):
             # help=f"{help_board[i][j]}",
             disabled=st.session_state.current_player == 1 and mode == "Player vs Bot"
             ):
-            if check_valid_move(st.session_state.board, i, j, 0, st.session_state.current_player):
-                st.session_state.board = make_move(st.session_state.board, i, j, st.session_state.current_player, 0, st.session_state.score)
+            if check_valid_move(st.session_state.board, i, j, 0, st.session_state.current_player, game_rules):
+                st.session_state.board = make_move(st.session_state.board, i, j, st.session_state.current_player, 0, st.session_state.score, game_rules)
                 st.session_state.turn += 1
             else:
                 st.toast("Invalid move! Please try again.", icon="🚫")
@@ -88,7 +89,7 @@ if st.session_state.current_player == 1 and mode == "Player vs Bot":
     start_time = perf_counter()
     st.session_state.last_move = bot_move(st.session_state.board, board_size, win_len, st.session_state.turn, st.session_state.score, debug)
     end_time = perf_counter()
-    st.session_state.board = make_move(st.session_state.board, st.session_state.last_move[0], st.session_state.last_move[1], 1, 0, st.session_state.score)
+    st.session_state.board = make_move(st.session_state.board, st.session_state.last_move[0], st.session_state.last_move[1], 1, 0, st.session_state.score, game_rules)
     st.session_state.bot_time = end_time - start_time
     w = check_winner(st.session_state.board, 0, board_size, win_len)
     if w == 1 or st.session_state.score[1] >= 5:
