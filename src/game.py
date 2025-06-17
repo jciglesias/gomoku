@@ -27,6 +27,7 @@ with st.sidebar:
     board_size = st.slider("Board Size", 5, 20, 19, 1, on_change=change_board_size, key="board_size")
     win_len = st.slider("Winning Length", 3, 10, 5, 1, on_change=change_board_size, key="win_len")
     debug = st.checkbox("Debug Mode", value=False, key="debug")
+    type_of_start = st.radio('Choose type of start', ['Classic', 'Pro', 'Long Pro', 'Swap', 'Swap2'], horizontal=True, key="game_type", on_change=change_board_size)
 
 if 'score' not in st.session_state:
     st.session_state.score = {1: 0, -1: 0}
@@ -39,7 +40,7 @@ with r.container(border=True):
 l.title("Gomoku Game")
 
 if 'board' not in st.session_state:
-    st.session_state.board = [[0 for _ in range(board_size)] for _ in range(board_size)]
+    st.session_state.board =  reset_game(0, board_size)
 if 'turn' not in st.session_state:
     st.session_state.turn = 0
 if 'last_move' not in st.session_state:
