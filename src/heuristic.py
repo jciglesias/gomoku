@@ -1,18 +1,7 @@
 import pandas as pd
 import numpy as np
-import time
 from src.utils import check_alignement_capture
-
-def check_direction(board_size, win_len, tab, player, row, col, delta_row, delta_col):
-    count = 0
-    for k in range(win_len):
-        r = row + k * delta_row
-        c = col + k * delta_col
-        if 0 <= r < board_size and 0 <= c < board_size and tab[r][c] == tab[row][col] and tab[r][c] == player:
-            count += 1
-        else:
-            break
-    return count == win_len
+import streamlit as st
 
 def heuristic_row(board_size, win_len, tab, player, reward):
     i = 0
@@ -96,7 +85,8 @@ def heuristic_capture(tab, player, row, col, g_score, reward_capture):
         res -= reward_capture[g_score[-player]] + 1
     return res
 
-def heuristic(board_size, win_len, tab, player, row, col, g_score):
+@st.cache_data
+def get_reward(win_len):
     reward_closed = [0] * (win_len + 1)
     reward_open1 = [0] + [0] + [10**i for i in range(-2, win_len, 2)]
     reward_open2 = [0] + [0] + [10**i for i in range(-1, win_len + 1, 2)]
@@ -105,6 +95,10 @@ def heuristic(board_size, win_len, tab, player, row, col, g_score):
     reward = [reward_closed, reward_open1, reward_open2]
     reward_capture = [10 + (i+1) for i in range(5)]
     reward_capture[4] = 10**(win_len)
+    return reward, reward_capture
+
+def heuristic(board_size, win_len, tab, player, row, col, g_score):
+    reward, reward_capture = get_reward(win_len)
     tab = np.array(tab)
     res = heuristic_capture(tab, player, row, col, g_score, reward_capture)
     res += heuristic_row(board_size, win_len, tab, player, reward)
