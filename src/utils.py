@@ -112,3 +112,12 @@ def get_button_type(last_move, i, j, suggestion=None):
 
 def check_empty_board(board, empty_cell):
     return all(cell == empty_cell for row in board for cell in row)
+
+def debugging(message, is_debug, gbf=False):
+    if is_debug and not gbf:
+        print(message)
+    elif is_debug and gbf:
+        for m in message:
+            point = m.point
+            h = m.heuristic
+            print(f"Point: {point}, Heuristic: {h}")
