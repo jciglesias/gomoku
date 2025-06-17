@@ -93,7 +93,7 @@ def heuristic_capture(tab, player, row, col, g_score, reward_capture):
     if check_alignement_capture(tab, row, col, player):
         res += reward_capture[g_score[player]]
     if check_alignement_capture(tab, row, col, -player):
-        res -= reward_capture[g_score[-player]]
+        res -= reward_capture[g_score[-player]] + 200
     return res
 
 def heuristic(board_size, win_len, tab, player, row, col, g_score):

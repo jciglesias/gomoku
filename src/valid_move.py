@@ -71,6 +71,6 @@ def check_valid_move(board, row, col, empty_cell, player):
     if board[row][col] != empty_cell:
         return False
     # check if the move creates a double-three
-    if check_threes(board, row, col, empty_cell, player):
-        return False
+    # if check_threes(board, row, col, empty_cell, player):
+    #     return False
     return True
