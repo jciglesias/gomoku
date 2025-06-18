@@ -4,9 +4,6 @@ from src.bot import bot_move, bot_suggestion
 from src.valid_move import check_valid_move
 from time import perf_counter
 from src.heuristic import heuristic_score
-import pandas as pd
-import numpy as np
-import functools
 
 def change_board_size():
     if st.session_state.mode == "Player vs Player":
@@ -112,11 +109,9 @@ for i in range(board_size):
             w = check_winner(st.session_state.board, 0, board_size, win_len)
             if w == 1 or st.session_state.score[st.session_state.current_piece] >= 5:
                 st.session_state.winner = st.session_state.current_piece
-                st.session_state.board = reset_game(0, board_size, type_of_start)
                 st.session_state.current_piece = -1
                 st.switch_page("src/gameover.py")
             elif w == -1:
-                st.session_state.board = reset_game(0, board_size, type_of_start)
                 st.session_state.current_piece = -1
                 st.switch_page("src/gameover.py")
             st.session_state.current_piece *= -1
@@ -134,11 +129,9 @@ if st.session_state.current_piece == 1 and mode == "Player vs Bot":
     w = check_winner(st.session_state.board, 0, board_size, win_len)
     if w == 1 or st.session_state.score[1] >= 5:
         st.session_state.winner = st.session_state.current_piece
-        st.session_state.board = reset_game(0, board_size, type_of_start)
         st.session_state.current_piece = -1
         st.switch_page("src/gameover.py")
     elif w == -1:
-        st.session_state.board = reset_game(0, board_size, type_of_start)
         st.session_state.current_piece = -1
         st.switch_page("src/gameover.py")
     else:
