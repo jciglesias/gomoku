@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 from src.utils import check_alignement_capture, remove_captured
-import streamlit as st
+import time
+import functools
 
 def heuristic_row(board_size, win_len, tab, player, reward):
     i = 0
@@ -96,7 +97,7 @@ def heuristic_capture(tab, player, row, col, g_score, reward_capture):
         res -= reward_capture[1][g_score[-player]]
     return res
 
-@st.cache_data
+@functools.lru_cache
 def get_reward(win_len):
     reward_closed = [0] * (win_len + 1)
     reward_open1 = [0] + [0] + [10**i for i in range(-2, win_len, 2)]
@@ -113,7 +114,11 @@ def get_reward(win_len):
     return reward, reward_capture
 
 def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["Capture", "Double Three"]):
+    start = time.time()
     reward, reward_capture = get_reward(win_len)
+    end = time.time()
+    elapsed = end -start
+    print(f"End = {elapsed:.2}ms")
     tab = np.array(tab)
     res = 0
     if 'Capture' in game_rules:
