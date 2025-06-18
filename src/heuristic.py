@@ -98,8 +98,8 @@ def heuristic_capture(tab, player, row, col, g_score, reward_capture):
 
 def get_oponent(val, a, b, win_len):
     if val == 10**(2 * win_len - 5):
-        return -val
-    return -val * a + b
+        return val * a
+    return val * a + b
 
 @functools.lru_cache
 def get_reward(win_len):
@@ -109,11 +109,11 @@ def get_reward(win_len):
     reward_closed[win_len] = 10**(2 * win_len - 5)
     reward_open1[win_len] = 10**(2 * win_len - 5)
     reward = [reward_closed, reward_open1, reward_open2]
-    reward_block = [[get_oponent(val, 1.5, 0, win_len) for val in lst] for lst in reward]
+    reward_block = [[get_oponent(val, -1.5, 0, win_len) for val in lst] for lst in reward]
     reward = [np.array(reward), np.array(reward_block)]
     reward_capture = [10 + (i + 1) for i in range(5)]
     reward_capture[4] = 10**(2 * win_len - 5)
-    reward_capture_block = [ get_oponent(val, -1, 10, win_len)  for val in reward_capture]
+    reward_capture_block = [ get_oponent(val, 1, 10, win_len)  for val in reward_capture]
     reward_capture = [np.array(reward_capture), np.array(reward_capture_block)]
     return reward, reward_capture
 
