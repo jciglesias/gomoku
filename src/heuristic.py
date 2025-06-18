@@ -141,11 +141,14 @@ def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["
         res += heuristic_capture(tab, player, row, col, g_score, reward_capture)
         if res != 0:
             tab, _ = remove_captured(tab, row, col, 0, player)
-    res += heuristic_column(board_size, win_len, tab, player, reward)
-    res += heuristic_column(board_size, win_len, tab.transpose(), player, reward)
-    res += heuristic_diag(board_size, win_len, tab, player, reward)
-    res += heuristic_diag(board_size, win_len, np.rot90(tab, k = 1), player, reward)
-    return res
+    res1 = heuristic_column(board_size, win_len, tab, player, reward)
+    res2 = heuristic_column(board_size, win_len, tab.transpose(), player, reward)
+    res3 = heuristic_diag(board_size, win_len, tab, player, reward)
+    res4 = heuristic_diag(board_size, win_len, np.rot90(tab, k = 1), player, reward)
+    combinaison = sum(x > 10 for x in [res1, res2, res3, res4])
+    if combinaison >= 2:
+        return 10**(2 * win_len - 6)
+    return res + res1 + res2 + res3 + res4
 
 def heuristic_score(win_len):
     df, dt = get_reward(win_len)
