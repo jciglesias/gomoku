@@ -21,6 +21,8 @@ def change_board_size():
         del st.session_state.score
     if 'player' in st.session_state:
         del st.session_state.player
+    if 'swap2_choise' in st.session_state:
+        del st.session_state.swap2_choise
     
 def swap_player(next_piece, current_player, turn, game_type, swap2_choise=None):
     chosen_piece = st.pills(f"{current_player} select your piece:", [1,-1], format_func=lambda option: marks[option], selection_mode="single")
@@ -56,7 +58,8 @@ l, m, r = st.columns(3)
 with l.container(border=True):
     st.subheader("Current Player:")
     if st.session_state.turn == 3 and type_of_start in ['Swap', 'Swap2']:
-        st.session_state.swap2_choise = st.pills(f"{st.session_state.player} do you want to swap pieces?", [1, -1], format_func=lambda option: "yes" if option > 0 else "no", selection_mode="single")
+        if type_of_start == 'Swap2' and st.session_state.swap2_choise is None:
+            st.session_state.swap2_choise = st.pills(f"{st.session_state.player} do you want to swap pieces?", [1, -1], format_func=lambda option: "yes" if option > 0 else "no", selection_mode="single")
         if type_of_start == 'Swap' or st.session_state.swap2_choise == 1:
             st.session_state.player = swap_player(st.session_state.current_piece, "Player 2", st.session_state.turn, type_of_start)
     elif type_of_start == 'Swap2' and st.session_state.turn == 5 and st.session_state.swap2_choise == -1:
