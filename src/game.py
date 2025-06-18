@@ -123,12 +123,6 @@ if st.session_state.current_player == 1 and mode == "Player vs Bot":
         st.session_state.current_player *= -1
         st.session_state.player = choose_player(st.session_state.turn, st.session_state.player, type_of_start)
         st.rerun()
-
-def format_value(x):
-    if x == int(x):
-        return f"{int(x):,}".replace(",", " ")
-    else:
-        return f"{x:.10f}".rstrip('0').rstrip('.').replace(",", " ")
     
 with st.sidebar:
     st.button("Reset Game", disabled=st.session_state.current_player == 1 and mode == "Player vs Bot", on_click=change_board_size)
