@@ -9,24 +9,22 @@ def heuristic_row(board_size, win_len, tab, player, reward):
     while i < board_size:
         j = 0
         while j <= board_size - 1:
-            if tab[j][i] == player:
+            cell_value = tab[j][i]
+            if cell_value == player:
                 open = 0
-                if j - 1 >= 0:
-                    if tab[j - 1][i] == 0:
-                        open = 1
+                if j - 1 >= 0 and tab[j - 1][i] == 0:
+                    open = 1
                 k = 0
                 while k < win_len and j < board_size and tab[j][i] == player:
                     k += 1
                     j += 1
-                if j < board_size:
-                    if tab[j][i] == 0:
-                        open += 1
+                if j < board_size and tab[j][i] == 0:
+                    open += 1
                 result += reward[open][k]
-            elif tab[j][i] == -player:
+            elif cell_value == -player:
                 open = 0
-                if j - 1 >= 0:
-                    if tab[j - 1][i] == 0:
-                        open = 1
+                if j - 1 >= 0 and tab[j - 1][i] == 0:
+                    open = 1
                 k = 0
                 lap = 0
                 while k < win_len and j < board_size and tab[j][i] != player and lap < 2:
@@ -35,16 +33,12 @@ def heuristic_row(board_size, win_len, tab, player, reward):
                         j += 1
                     else:
                         lap += 1
-                        if j + 1 < board_size:
-                            if tab[j + 1][i] == -player and lap == 1:
-                                j += 1
-                            else:
-                                break
+                        if j + 1 < board_size and tab[j + 1][i] == -player and lap == 1:
+                            j += 1
                         else:
                             break
-                if j < board_size:
-                    if tab[j][i] == 0:
-                        open += 1
+                if j < board_size and tab[j][i] == 0:
+                    open += 1
                 result -= reward[open][k] * 1.5
             else:
                 j += 1
@@ -56,45 +50,38 @@ def heuristic_diag(board_size, win_len, tab, player, reward):
     j =  1 - board_size
     while j < board_size:
         i = max(0, j)
-        while i < min(board_size, j + board_size):
-            if tab[i][i - j] == player:
+        min_board = min(board_size, j + board_size)
+        while i < min_board:
+            cell_value = tab[i][i - j]
+            if cell_value == player:
                     open = 0
-                    if i - 1 >= 0 and i - 1 - j >= 0:
-                        if tab[i - 1][i - 1 - j] == 0:
-                            open = 1
+                    if i - 1 >= 0 and i - 1 - j >= 0 and tab[i - 1][i - 1 - j] == 0:
+                        open = 1
                     k = 0
-                    min_board = min(board_size, j + board_size)
                     while k < win_len and i < min_board and tab[i][i - j] == player:
                         k += 1
                         i += 1
-                    if i < board_size and i - j < board_size:
-                        if tab[i][i - j] == 0:
+                    if i < board_size and i - j < board_size and cell_value == 0:
                             open += 1
                     result += reward[open][k]
-            elif tab[i][i - j] == -player:
+            elif cell_value == -player:
                     open = 0
-                    if i - 1 >= 0 and i - 1 - j >= 0:
-                        if tab[i - 1][i - 1 - j] == 0:
-                            open = 1
+                    if i > 0 and i - j > 0 and tab[i - 1][i - 1 - j] == 0:
+                        open = 1
                     k = 0
                     lap = 0
-                    min_board = min(board_size, j + board_size)
                     while k < win_len and i < min_board and tab[i][i - j] != player and lap < 2:
                         if tab[i][i - j] == -player:
                             k += 1
                             i += 1
                         else:
                             lap += 1
-                            if i + 1 < min_board:
-                                if tab[i + 1][i + 1 - j] == -player and lap == 1:
+                            if i + 1 < min_board and tab[i + 1][i + 1 - j] == -player and lap == 1:
                                     i += 1
-                                else:
-                                    break
                             else:
                                 break
-                    if i < board_size and i - j < board_size:
-                        if tab[i][i - j] == 0:
-                            open += 1
+                    if i < board_size and i - j < board_size and tab[i][i - j] == 0:
+                        open += 1
                     result -= reward[open][k] * 1.5
             else:
                 i += 1
@@ -106,7 +93,7 @@ def heuristic_capture(tab, player, row, col, g_score, reward_capture):
     if check_alignement_capture(tab, row, col, player):
         res += reward_capture[g_score[player]]
     if check_alignement_capture(tab, row, col, -player):
-        res -= reward_capture[g_score[-player]] + 1
+        res -= reward_capture[g_score[-player]] + 10
     return res
 
 @st.cache_data
@@ -127,7 +114,7 @@ def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["
     res = 0
     if 'Capture' in game_rules:
         res += heuristic_capture(tab, player, row, col, g_score, reward_capture)
-        if res > 0:
+        if res != 0:
             tab, _ = remove_captured(tab, row, col, 0, player)
     res += heuristic_row(board_size, win_len, tab, player, reward)
     res += heuristic_row(board_size, win_len, tab.transpose(), player, reward)
