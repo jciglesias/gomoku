@@ -128,7 +128,7 @@ def format_value(x):
     if x == int(x):
         return f"{int(x):,}".replace(",", " ")
     else:
-        return f"{x:,.4f}".replace(",", " ")
+        return f"{x:.10f}".rstrip('0').rstrip('.').replace(",", " ")
     
 with st.sidebar:
     st.button("Reset Game", disabled=st.session_state.current_player == 1 and mode == "Player vs Bot", on_click=change_board_size)

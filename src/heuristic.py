@@ -113,7 +113,7 @@ def get_reward(win_len):
     reward = [np.array(reward), np.array(reward_block)]
     reward_capture = [10 + (i + 1) for i in range(5)]
     reward_capture[4] = 10**(2 * win_len - 5)
-    reward_capture_block = [ get_oponent(val, 1, 10, win_len)  for val in reward_capture]
+    reward_capture_block = [ get_oponent(val, 1, -10, win_len)  for val in reward_capture]
     reward_capture = [np.array(reward_capture), np.array(reward_capture_block)]
     return reward, reward_capture
 
@@ -133,12 +133,14 @@ def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["
 
 def heuristic_score(win_len):
     df, dt = get_reward(win_len)
-    df_1 = pd.DataFrame(df[0])
+    df_1 = pd.DataFrame(df[0]).iloc[:, 1:]
     df_1.index = ['Score for closed', 'Score for semi-opened', 'Score for opened']
-    df_2 = pd.DataFrame(df[1])
+    df_2 = pd.DataFrame(df[1]).iloc[:, 1:]
     df_2.index = ['Score for closed', 'Score for semi-opened', 'Score for opened']
     dt_1 = pd.DataFrame(dt[0]).T
     dt_1.index = ['Score']
+    dt_1.columns = ['1', '2', '3', '4', '5']
     dt_2 = pd.DataFrame(dt[1]).T
     dt_2.index = ['Score']
+    dt_2.columns = ['1', '2', '3', '4', '5']
     return [df_1, df_2], [dt_1, dt_2]
