@@ -135,3 +135,9 @@ def choose_player(turn, player, start_type):
             elif start_type == 'Swap2':
                 return "Player 2"
     return "Player 2" if player == "Player 1" else "Player 1"
+
+def format_value(x):
+    if x == int(x):
+        return f"{int(x):,}".replace(",", " ")
+    else:
+        return f"{x:.10f}".rstrip('0').rstrip('.').replace(",", " ")
