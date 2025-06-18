@@ -24,6 +24,7 @@ def heuristic_row(board_size, win_len, tab, player, reward):
                         open = 0
                 elif k == 3 and open == 1 and (j - k  - 1 < 0  or (j - k  - 1 < 0 and tab[j - k  - 1][i] == -player)):
                     open = 0
+                print(f"reward[0][open][k] {reward[0][open][k]}")
                 result += reward[0][open][k]
             elif cell_value == -player:
                 open = 0
@@ -109,7 +110,7 @@ def heuristic_capture(tab, player, row, col, g_score, reward_capture):
     if check_alignement_capture(tab, row, col, player):
         res += reward_capture[0][g_score[player]]
     if check_alignement_capture(tab, row, col, -player):
-        res -= reward_capture[1][g_score[-player]]
+        res += reward_capture[1][g_score[-player]]
     return res
 
 def get_oponent(val, a, b, win_len):
@@ -139,12 +140,18 @@ def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["
     res = 0
     if 'Capture' in game_rules:
         res += heuristic_capture(tab, player, row, col, g_score, reward_capture)
+        print(f"res {res}")
         if res != 0:
             tab, _ = remove_captured(tab, row, col, 0, player)
+    print(f"res {res}")
     res += heuristic_row(board_size, win_len, tab, player, reward)
+    print(f"res {res}")
     res += heuristic_row(board_size, win_len, tab.transpose(), player, reward)
+    print(f"res {res}")
     res += heuristic_diag(board_size, win_len, tab, player, reward)
+    print(f"res {res}")
     res += heuristic_diag(board_size, win_len, np.rot90(tab, k = 1), player, reward)
+    print(f"res {res}")
     return res
 
 def heuristic_score(win_len):
