@@ -122,7 +122,7 @@ def debugging(message, is_debug, gbf=False):
             h = m.heuristic
             print(f"Point: {point}, Heuristic: {h}")
 
-def choose_player(turn, player, start_type):
+def choose_player(turn, player, start_type, swap=None):
     if turn < 3:
         if start_type in ['Swap', 'Swap2']:
             return "Player 1"
@@ -131,6 +131,8 @@ def choose_player(turn, player, start_type):
                 return "Player 2"
         elif turn < 1:
             return "Player 1"
+    elif swap and turn < 5:
+        return "Player 2"
     return "Player 2" if player == "Player 1" else "Player 1"
 
 def find_gray_pro_zone(board, board_size, zone_size):

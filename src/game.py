@@ -22,10 +22,10 @@ def change_board_size():
     if 'player' in st.session_state:
         del st.session_state.player
     
-def swap_player(next_piece, current_player, turn, game_type):
+def swap_player(next_piece, current_player, turn, game_type, swap2_choise=None):
     chosen_piece = st.pills(f"{current_player} select your piece:", [1,-1], format_func=lambda option: marks[option], selection_mode="single")
     if chosen_piece is not None and chosen_piece != next_piece:
-        return choose_player(turn, current_player, game_type)
+        return choose_player(turn, current_player, game_type, swap2_choise == -1)
     elif chosen_piece is None:
         return None
     return current_player
@@ -45,17 +45,22 @@ if 'current_piece' not in st.session_state:
     st.session_state.current_piece = 1 if type_of_start in ['Pro', 'Long Pro'] else -1
 if 'turn' not in st.session_state:
     st.session_state.turn = 0 if type_of_start not in ['Pro', 'Long Pro'] else 1
+if 'swap2_choise' not in st.session_state:
+    st.session_state.swap2_choise = None
 if "player" not in st.session_state:
-    st.session_state.player = choose_player(st.session_state.turn, None, type_of_start)
+    st.session_state.player = choose_player(st.session_state.turn, None, type_of_start, st.session_state.swap2_choise == -1)
 
 if 'score' not in st.session_state:
     st.session_state.score = {1: 0, -1: 0}
 l, m, r = st.columns(3)
 with l.container(border=True):
     st.subheader("Current Player:")
-    # if st.session_state.turn == 5 and type_of_start == 'Swap2':
     if st.session_state.turn == 3 and type_of_start in ['Swap', 'Swap2']:
-        st.session_state.player = swap_player(st.session_state.current_piece, "Player 2", st.session_state.turn, type_of_start)
+        st.session_state.swap2_choise = st.pills(f"{st.session_state.player} do you want to swap pieces?", [1, -1], format_func=lambda option: "yes" if option > 0 else "no", selection_mode="single")
+        if type_of_start == 'Swap' or st.session_state.swap2_choise == 1:
+            st.session_state.player = swap_player(st.session_state.current_piece, "Player 2", st.session_state.turn, type_of_start)
+    elif type_of_start == 'Swap2' and st.session_state.turn == 5 and st.session_state.swap2_choise == -1:
+        st.session_state.player = swap_player(st.session_state.current_piece, "Player 1", st.session_state.turn, type_of_start, st.session_state.swap2_choise)
     st.write(st.session_state.player, marks[st.session_state.current_piece])
 with r.container(border=True):
     st.subheader("Score")
@@ -108,7 +113,7 @@ for i in range(board_size):
             st.session_state.last_move = (i, j)
             if 'bot_time' in st.session_state:
                 del st.session_state.bot_time
-            st.session_state.player = choose_player(st.session_state.turn, st.session_state.player, type_of_start)
+            st.session_state.player = choose_player(st.session_state.turn, st.session_state.player, type_of_start, st.session_state.swap2_choise == -1)
             st.rerun()
 if st.session_state.current_piece == 1 and mode == "Player vs Bot":
     start_time = perf_counter()
