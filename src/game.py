@@ -101,7 +101,7 @@ for i in range(board_size):
             marks[st.session_state.board[i][j]],
             type=type_button,
             key=f"{i}-{j}", 
-            disabled=(st.session_state.current_piece == 1 and mode == "Player vs Bot") or not st.session_state.player or (i,j) in gray_zone
+            disabled=(st.session_state.current_piece == 1 and mode == "Player vs Bot") or not st.session_state.player or (i,j) in gray_zone or (st.session_state.turn == 3 and type_of_start == 'Swap2' and st.session_state.swap2_choise is None)
             ):
             if check_valid_move(st.session_state.board, i, j, 0, st.session_state.current_piece, game_rules):
                 st.session_state.board = make_move(st.session_state.board, i, j, st.session_state.current_piece, 0, st.session_state.score, game_rules)
