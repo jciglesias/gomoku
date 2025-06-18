@@ -114,11 +114,7 @@ def get_reward(win_len):
     return reward, reward_capture
 
 def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["Capture", "Double Three"]):
-    start = time.time()
     reward, reward_capture = get_reward(win_len)
-    end = time.time()
-    elapsed = end -start
-    print(f"End = {elapsed:.2}ms")
     tab = np.array(tab)
     res = 0
     if 'Capture' in game_rules:
