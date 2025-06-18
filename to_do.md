@@ -4,12 +4,15 @@
 
 - [X] Prendre en compte les poins alignes
 - [X] Prendre en compte les poins alignes de l'adversaire
-- [X] Prendre en compte les alignements bloques ou non
-- [ ] Verifier si le board est possible par rapport au dernier move (pas capture propre pion ou double threes)
-  - necessite d'envoyer a la fonction la position du dernier move
-- [ ] Ajuster le score en fonction d'une nouvelle capture
-  - necessite d'envoyer a la fonction la position du dernier move + le compte de capture pour le bot et le player
+- [X] Prendre en compte les alignements a bloquer
+- [X] Prendre en compte les alignements avec un trou a bloquer
+- [X] Prendre en compte les captures possibles
+- [X] Prendre en compte les alignements apres le resultat de la capture
  
+## Algo MinMax
+- [ ] Verifier si le board est possible par rapport au move choisi par le bot (pas double threes)
+- [X] Ajuster le score en fonction d'une nouvelle capture
+
 ## IHM
 
 - [X] Mode bot
