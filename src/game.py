@@ -4,6 +4,7 @@ from src.bot import bot_move, bot_suggestion
 from src.valid_move import check_valid_move
 from time import perf_counter
 from src.heuristic import heuristic_score
+from copy import deepcopy
 
 def change_board_size():
     if st.session_state.mode == "Player vs Player":
@@ -58,19 +59,35 @@ if "player" not in st.session_state:
 
 if 'score' not in st.session_state:
     st.session_state.score = {1: 0, -1: 0}
+if 'last_score' not in st.session_state:
+    st.session_state.last_score = {1: 0, -1: 0}
 l, m, r = st.columns(3)
 with l.container(border=True):
     st.subheader("Current Player:")
     if st.session_state.turn == 3 and type_of_start in ['Swap', 'Swap2']:
         if type_of_start == 'Swap2' and st.session_state.swap2_choise is None:
-            st.session_state.swap2_choise = st.pills(f"{st.session_state.player} do you want to swap pieces?", [1, -1], format_func=lambda option: "yes" if option > 0 else "no", selection_mode="single")
+            st.session_state.swap2_choise = st.pills(f"{st.session_state.player} do you want to choose your piece?", [1, -1], format_func=lambda option: "yes" if option > 0 else "no", selection_mode="single")
         if type_of_start == 'Swap' or st.session_state.swap2_choise == 1:
             st.session_state.player = swap_player(st.session_state.current_piece, "Player 2", st.session_state.turn, type_of_start)
     elif type_of_start == 'Swap2' and st.session_state.turn == 5 and st.session_state.swap2_choise == -1:
         st.session_state.player = swap_player(st.session_state.current_piece, "Player 1", st.session_state.turn, type_of_start, st.session_state.swap2_choise)
     st.write(st.session_state.player, marks[st.session_state.current_piece])
 with r.container(border=True):
-    st.subheader("Score")
+    rl, rr = st.columns(2)
+    rl.subheader("Score")
+    if rr.button("Undo Last Move", disabled=mode == "Player vs Bot"):
+        if st.session_state.last_move is not None:
+            st.session_state.board = deepcopy(st.session_state.last_board)
+            st.session_state.score = deepcopy(st.session_state.last_score)
+            st.session_state.current_piece *= -1
+            st.session_state.turn -= 1
+            if st.session_state.turn < 3 and type_of_start in ['Swap', 'Swap2']:
+                st.session_state.swap2_choise = None
+            st.session_state.player = choose_player(st.session_state.turn, st.session_state.player, type_of_start, st.session_state.swap2_choise == -1)
+            st.session_state.last_move = None
+            if 'bot_time' in st.session_state:
+                del st.session_state.bot_time
+            st.rerun()
     cl, cr = st.columns(2)
     cl.write(f"{marks[1]}: {st.session_state.score.get(1, 0)}")
     cr.write(f"{marks[-1]}: {st.session_state.score.get(-1, 0)}")
@@ -79,6 +96,8 @@ m.title("Gomoku Game")
 
 if 'board' not in st.session_state:
     st.session_state.board =  reset_game(0, board_size, type_of_start)
+if 'last_board' not in st.session_state:
+    st.session_state.last_board = None
 if 'last_move' not in st.session_state:
     st.session_state.last_move = None
 
@@ -101,6 +120,8 @@ for i in range(board_size):
             disabled=(st.session_state.current_piece == 1 and mode == "Player vs Bot") or not st.session_state.player or (i,j) in gray_zone or (st.session_state.turn == 3 and type_of_start == 'Swap2' and st.session_state.swap2_choise is None)
             ):
             if check_valid_move(st.session_state.board, i, j, 0, st.session_state.current_piece, game_rules):
+                st.session_state.last_board = deepcopy(st.session_state.board)
+                st.session_state.last_score = deepcopy(st.session_state.score)
                 st.session_state.board = make_move(st.session_state.board, i, j, st.session_state.current_piece, 0, st.session_state.score, game_rules)
                 st.session_state.turn += 1
             else:
@@ -124,6 +145,8 @@ if st.session_state.current_piece == 1 and mode == "Player vs Bot":
     start_time = perf_counter()
     st.session_state.last_move = bot_move(st.session_state.board, board_size, win_len, st.session_state.turn, st.session_state.score, debug, game_rules)
     end_time = perf_counter()
+    st.session_state.last_board = deepcopy(st.session_state.board)
+    st.session_state.last_score = deepcopy(st.session_state.score)
     st.session_state.board = make_move(st.session_state.board, st.session_state.last_move[0], st.session_state.last_move[1], 1, 0, st.session_state.score, game_rules)
     st.session_state.bot_time = end_time - start_time
     w = check_winner(st.session_state.board, 0, board_size, win_len)
