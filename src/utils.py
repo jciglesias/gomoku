@@ -90,8 +90,15 @@ def check_direction(row, col, delta_row, delta_col, board_size, win_len, board):
             break
     return count == win_len
 
-def reset_game(empty_cell, board_size):
-    return [[empty_cell for _ in range(board_size)] for _ in range(board_size)]
+def reset_game(empty_cell, board_size, type_start):
+    if type_start not in ['Pro', 'Long Pro']:
+        return [[empty_cell for _ in range(board_size)] for _ in range(board_size)]
+    else:
+        # start with -1 in the center for Pro and Long Pro
+        center = board_size // 2
+        board = [[empty_cell for _ in range(board_size)] for _ in range(board_size)]
+        board[center][center] = -1
+        return board
     
 def switch_player(player):
     return player * -1
@@ -114,3 +121,17 @@ def debugging(message, is_debug, gbf=False):
             point = m.point
             h = m.heuristic
             print(f"Point: {point}, Heuristic: {h}")
+
+def choose_player(turn, player, start_type):
+    if turn < 5:
+        if turn < 1:
+            return "Player 1"
+        if start_type in ['Pro', 'Long Pro']:
+            if turn < 2:
+                return "Player 2"
+        if start_type in ['Swap', 'Swap2']:
+            if turn < 3:
+                return "Player 1"
+            elif start_type == 'Swap2':
+                return "Player 2"
+    return "Player 2" if player == "Player 1" else "Player 1"
