@@ -123,15 +123,12 @@ def debugging(message, is_debug, gbf=False):
             print(f"Point: {point}, Heuristic: {h}")
 
 def choose_player(turn, player, start_type):
-    if turn < 5:
-        if turn < 1:
+    if turn < 3:
+        if start_type in ['Swap', 'Swap2']:
             return "Player 1"
-        if start_type in ['Pro', 'Long Pro']:
+        elif start_type in ['Pro', 'Long Pro']:
             if turn < 2:
                 return "Player 2"
-        if start_type in ['Swap', 'Swap2']:
-            if turn < 3:
-                return "Player 1"
-            elif start_type == 'Swap2':
-                return "Player 2"
+        elif turn < 1:
+            return "Player 1"
     return "Player 2" if player == "Player 1" else "Player 1"
