@@ -95,7 +95,7 @@ for i in range(board_size):
     for j in range(board_size):
         type_button = get_button_type(st.session_state.last_move, i, j,  points_suggested)
         if cols[j].button(
-            marks[st.session_state.board[i][j]],
+            marks[st.session_state.board[i][j]] if st.session_state.last_move != (i, j) else b_marks[st.session_state.board[i][j]],
             type=type_button,
             key=f"{i}-{j}", 
             disabled=(st.session_state.current_piece == 1 and mode == "Player vs Bot") or not st.session_state.player or (i,j) in gray_zone or (st.session_state.turn == 3 and type_of_start == 'Swap2' and st.session_state.swap2_choise is None)

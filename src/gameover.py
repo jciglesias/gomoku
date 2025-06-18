@@ -1,5 +1,6 @@
 import streamlit as st
 from src.utils import *
+import math
 
 st.balloons()
 l, r = st.columns(2)
@@ -9,6 +10,7 @@ with l.container(border=True):
     else:
         st.title(f"Winner: {marks[st.session_state.winner]}")
         del st.session_state['winner']
+    st.write(f"In {math.ceil(st.session_state.turn/2)} turns")
     # show the final board state
     st.write("Final Board State:")
     if 'board' in st.session_state:
