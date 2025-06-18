@@ -6,6 +6,11 @@ marks = {
     -1: ':green[:material/check_circle:]'
 }
 
+b_marks = {
+    1: ':red-badge[:material/cancel:]',
+    -1: ':green-badge[:material/check_circle:]'
+}
+
 def check_alignement_capture(board, row, col, player):
     board_size = len(board)
     directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
@@ -106,8 +111,8 @@ def switch_player(player):
 def get_button_type(last_move, i, j, suggestion=None):
     if suggestion and (i, j) in suggestion:
         return "primary"
-    if last_move and last_move == (i, j):
-        return "secondary"
+    # if last_move and last_move == (i, j):
+    #     return "secondary"
     return "tertiary"
 
 def check_empty_board(board, empty_cell):
