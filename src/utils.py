@@ -135,6 +135,12 @@ def choose_player(turn, player, start_type, swap=None):
         return "Player 2"
     return "Player 2" if player == "Player 1" else "Player 1"
 
+def format_value(x):
+    if x == int(x):
+        return f"{int(x):,}".replace(",", " ")
+    else:
+        return f"{x:.10f}".rstrip('0').rstrip('.').replace(",", " ")
+
 def find_gray_pro_zone(board, board_size, zone_size):
     moves = get_possible_moves(board, empty_cell=0, radius=zone_size, piece=-1)
     return moves if moves else []
