@@ -5,7 +5,10 @@ from src.valid_move import check_valid_move
 from time import perf_counter
 
 def change_board_size():
-    st.session_state.board = reset_game(0, st.session_state.board_size, st.session_state.game_type)
+    if st.session_state.mode == "Player vs Player":
+        st.session_state.board = reset_game(0, st.session_state.board_size, st.session_state.game_type)
+    else:
+        st.session_state.board = reset_game(0, st.session_state.board_size, "Classic")
     if 'current_player' in st.session_state:
         del st.session_state.current_player
     if 'bot_time' in st.session_state:
@@ -25,8 +28,10 @@ with st.sidebar:
     board_size = st.slider("Board Size", 5, 20, 19, 1, on_change=change_board_size, key="board_size")
     win_len = st.slider("Winning Length", 3, 10, 5, 1, on_change=change_board_size, key="win_len")
     debug = st.checkbox("Debug Mode", value=False, key="debug")
-    type_of_start = st.radio('Choose type of start', ['Classic', 'Pro', 'Long Pro', 'Swap', 'Swap2'], horizontal=True, key="game_type", on_change=change_board_size)
+    type_of_start = st.radio('Choose type of start', ['Classic', 'Pro', 'Long Pro', 'Swap', 'Swap2'], horizontal=True, key="game_type", on_change=change_board_size, disabled=mode == "Player vs Bot")
     game_rules = st.multiselect("Game Rules", ["Capture", "Double Three"], default=["Capture", "Double Three"])
+    if mode == "Player vs Bot":
+        type_of_start = "Classic"
 
 if 'current_player' not in st.session_state:
     st.session_state.current_player = 1 if type_of_start in ['Pro', 'Long Pro'] else -1
@@ -109,6 +114,7 @@ if st.session_state.current_player == 1 and mode == "Player vs Bot":
         st.switch_page("src/gameover.py")
     else:
         st.session_state.current_player *= -1
+        st.session_state.player = choose_player(st.session_state.turn, st.session_state.player, type_of_start)
         st.rerun()
 
 with st.sidebar:
