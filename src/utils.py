@@ -122,18 +122,17 @@ def debugging(message, is_debug, gbf=False):
             h = m.heuristic
             print(f"Point: {point}, Heuristic: {h}")
 
-def choose_player(turn, player, start_type):
-    if turn < 5:
-        if turn < 1:
+def choose_player(turn, player, start_type, swap=None):
+    if turn < 3:
+        if start_type in ['Swap', 'Swap2']:
             return "Player 1"
-        if start_type in ['Pro', 'Long Pro']:
+        elif start_type in ['Pro', 'Long Pro']:
             if turn < 2:
                 return "Player 2"
-        if start_type in ['Swap', 'Swap2']:
-            if turn < 3:
-                return "Player 1"
-            elif start_type == 'Swap2':
-                return "Player 2"
+        elif turn < 1:
+            return "Player 1"
+    elif swap and turn < 5:
+        return "Player 2"
     return "Player 2" if player == "Player 1" else "Player 1"
 
 def format_value(x):
@@ -141,3 +140,23 @@ def format_value(x):
         return f"{int(x):,}".replace(",", " ")
     else:
         return f"{x:.10f}".rstrip('0').rstrip('.').replace(",", " ")
+
+def find_gray_pro_zone(board, board_size, zone_size):
+    moves = get_possible_moves(board, empty_cell=0, radius=zone_size, piece=-1)
+    return moves if moves else []
+
+def get_possible_moves(board, empty_cell, radius=2, piece=None):
+    size = len(board)
+    possible_moves = set()
+
+    for i in range(size):
+        for j in range(size):
+            if (not piece and board[i][j] != empty_cell) or (piece and board[i][j] == piece):
+                for dx in range(-radius, radius + 1):
+                    for dy in range(-radius, radius + 1):
+                        ni, nj = i + dx, j + dy
+                        if 0 <= ni < size and 0 <= nj < size:
+                            if board[ni][nj] == empty_cell:
+                                possible_moves.add((ni, nj))
+
+    return list(possible_moves)

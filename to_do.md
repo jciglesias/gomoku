@@ -29,7 +29,7 @@
 
 - [X] Choisir board size / win length
 - [X] Choisir les regles au commencement (avec ou sans capture / autre ?)
-- [ ] Implementer les starting conditions (Standard, Pro, Swap, Swap2...)
+- [X] Implementer les starting conditions (Standard, Pro, Swap, Swap2...)
 - [ ] Possibilite de commencer ou non
 - [ ] Hint button : alerte  3 / 4 et capture
 - [ ] Revenir en arriere ?
