@@ -91,9 +91,9 @@ def heuristic_diag(board_size, win_len, tab, player, reward):
 def heuristic_capture(tab, player, row, col, g_score, reward_capture):
     res = 0
     if check_alignement_capture(tab, row, col, player):
-        res += reward_capture[g_score[player]]
+        res += reward_capture[0][g_score[player]]
     if check_alignement_capture(tab, row, col, -player):
-        res -= reward_capture[g_score[-player]] + 10
+        res -= reward_capture[1][g_score[-player]]
     return res
 
 @st.cache_data
@@ -108,6 +108,8 @@ def get_reward(win_len):
     reward = [reward, reward_block]
     reward_capture = [10 + (i+1) for i in range(5)]
     reward_capture[4] = 10**(win_len)
+    reward_capture_block = [val + 10 for val in reward_capture]
+    reward_capture = [reward_capture, reward_capture_block]
     return reward, reward_capture
 
 def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["Capture", "Double Three"]):
