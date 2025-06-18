@@ -12,11 +12,13 @@ b_marks = {
 }
 
 def check_alignement_capture(board, row, col, player):
+    # print(f"  check_alignement_capture",  row, col)
     board_size = len(board)
     directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
     for dr, dc in directions:
         r, c = row + dr, col + dc
         if 0 <= r < board_size and 0 <= c < board_size:
+            # print(f"board[{r}][{c}] {board[r][c]}")
             if board[r][c] == -player:  # Found an opponent piece
                 # search in the same direction for another opponent piece
                 r2, c2 = r + dr, c + dc
@@ -29,10 +31,24 @@ def check_alignement_capture(board, row, col, player):
                                 return True
     return False
 
+def check_block(board, row, col, empty_cell, player):
+    # Check if the move for blocking an opponent
+    board_size = len(board)
+    directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+    for dr, dc in directions:
+        r, c = row + dr, col + dc
+        if 0 <= r < board_size and 0 <= c < board_size and  board[r][c] == -player:  # Found an opponent piece
+                # search in the same direction for another opponent piece
+                r2, c2 = r + dr, c + dc
+                if 0 <= r2 < board_size and 0 <= c2 < board_size and board[r2][c2] == -player:
+                        return 1
+    return 0
+
 def check_capture(board, row, col, empty_cell, player):
     # Check if the move captures exactly two opponent pieces
     if board[row][col] != empty_cell:
         return False
+    # print("check_capture", row, col)
     # Check all 8 directions for a capture
     return check_alignement_capture(board, row, col, player)
 
@@ -59,17 +75,23 @@ def remove_captured(board, row, col, empty_cell, player):
                                 board[r2][c2] = empty_cell
     return board, count_captured
 
-def make_move(board_og, row, col, player, empty_cell, score=None, game_rules=[]) -> list:
+def make_move(board_og, row, col, player, empty_cell, score=None, game_rules=[], turn=0) -> list:
     board = deepcopy(board_og)
     is_capture = check_capture(board, row, col, empty_cell, player)
-    # print(f"Check {row,col}",is_capture)
+    # print("turn", turn, "player", player, "is_capture", is_capture, row, col)
     if board[row][col] == empty_cell:
         board[row][col] = player
         if is_capture and 'Capture' in game_rules:
-            # print(f"Capture at {row,col}")
             board, n_captures = remove_captured(board, row, col, empty_cell, player)
             if score is not None:
                 score[player] +=  n_captures
+    if turn > 1:
+        if is_capture:
+            is_block = 1
+        else:
+            is_block = check_block(board, row, col, empty_cell, player)
+        if score is not None:
+            score[2 * player] = round((is_block + score[2 * player] * turn) / (turn + 1), 1)
     del board_og
     return board
 
