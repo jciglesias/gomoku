@@ -74,7 +74,10 @@ if st.session_state.current_piece == -1 and 'bot_time' in st.session_state:
     st.toast(f"Bot made a move in {st.session_state.bot_time:.4f} seconds", icon="🤖")
     st.sidebar.write(f"Bot Time: {st.session_state.bot_time:.4f} seconds")
     del st.session_state.bot_time
+
 points_suggested = bot_suggestion(st.session_state.board, board_size, win_len, st.session_state.current_piece, st.session_state.score, debug, game_rules) if mode == "Player vs Player" and st.session_state.suggest_moves else None
+gray_zone = find_gray_pro_zone(st.session_state.board, board_size, 2 if type_of_start == 'Pro' else 3) if type_of_start in ['Pro', 'Long Pro'] and st.session_state.turn == 2 else []
+
 for i in range(board_size):
     cols = st.columns(board_size)
     for j in range(board_size):
@@ -83,7 +86,7 @@ for i in range(board_size):
             marks[st.session_state.board[i][j]],
             type=type_button,
             key=f"{i}-{j}", 
-            disabled=(st.session_state.current_piece == 1 and mode == "Player vs Bot") or not st.session_state.player
+            disabled=(st.session_state.current_piece == 1 and mode == "Player vs Bot") or not st.session_state.player or (i,j) in gray_zone
             ):
             if check_valid_move(st.session_state.board, i, j, 0, st.session_state.current_piece, game_rules):
                 st.session_state.board = make_move(st.session_state.board, i, j, st.session_state.current_piece, 0, st.session_state.score, game_rules)

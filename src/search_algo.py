@@ -98,22 +98,6 @@ def is_terminal(board, empty_cell, win_len):
         return True
     return False
 
-def get_possible_moves(board, empty_cell, radius=2):
-    size = len(board)
-    possible_moves = set()
-
-    for i in range(size):
-        for j in range(size):
-            if board[i][j] != empty_cell:
-                for dx in range(-radius, radius + 1):
-                    for dy in range(-radius, radius + 1):
-                        ni, nj = i + dx, j + dy
-                        if 0 <= ni < size and 0 <= nj < size:
-                            if board[ni][nj] == empty_cell:
-                                possible_moves.add((ni, nj))
-
-    return list(possible_moves)
-
 def first_move(board, player):
     moves = get_possible_moves(board, empty_cell=0, radius=1)
     return moves[0]

@@ -132,3 +132,23 @@ def choose_player(turn, player, start_type):
         elif turn < 1:
             return "Player 1"
     return "Player 2" if player == "Player 1" else "Player 1"
+
+def find_gray_pro_zone(board, board_size, zone_size):
+    moves = get_possible_moves(board, empty_cell=0, radius=zone_size, piece=-1)
+    return moves if moves else []
+
+def get_possible_moves(board, empty_cell, radius=2, piece=None):
+    size = len(board)
+    possible_moves = set()
+
+    for i in range(size):
+        for j in range(size):
+            if (not piece and board[i][j] != empty_cell) or (piece and board[i][j] == piece):
+                for dx in range(-radius, radius + 1):
+                    for dy in range(-radius, radius + 1):
+                        ni, nj = i + dx, j + dy
+                        if 0 <= ni < size and 0 <= nj < size:
+                            if board[ni][nj] == empty_cell:
+                                possible_moves.add((ni, nj))
+
+    return list(possible_moves)
