@@ -93,7 +93,7 @@ def heuristic_capture(tab, player, row, col, g_score, reward_capture):
     if check_alignement_capture(tab, row, col, player):
         res += reward_capture[0][g_score[player]]
     if check_alignement_capture(tab, row, col, -player):
-        res -= reward_capture[1][g_score[-player]]
+        res += reward_capture[1][g_score[-player]]
     return res
 
 def get_oponent(val, a, b, win_len):
