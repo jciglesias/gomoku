@@ -3,6 +3,10 @@ from src.utils import *
 from src.bot import bot_move, get_heuristic_board, bot_suggestion
 from src.valid_move import check_valid_move
 from time import perf_counter
+from src.heuristic import heuristic_score
+import pandas as pd
+import numpy as np
+import functools
 
 def change_board_size():
     st.session_state.board = reset_game(0, st.session_state.board_size)
@@ -15,6 +19,9 @@ def change_board_size():
         del st.session_state.turn
     if 'score' in st.session_state:
         del st.session_state.score
+    if 'coeff' in st.session_state:
+        del st.session_state.df
+        del st.session_state.dt
 
 with st.sidebar:
     mode = st.radio("Game Mode", ["Player vs Player", "Player vs Bot"], horizontal=True, key="mode", on_change=change_board_size)
@@ -105,6 +112,23 @@ if st.session_state.current_player == 1 and mode == "Player vs Bot":
         st.session_state.current_player *= -1
         st.rerun()
 
+def format_value(x):
+    if x == int(x):
+        return f"{int(x):,}".replace(",", " ")
+    else:
+        return f"{x:,.2f}".replace(",", " ")
+    
 with st.sidebar:
     if st.button("Reset Game", disabled=st.session_state.current_player == 1 and mode == "Player vs Bot", on_click=change_board_size):
         st.rerun()
+    if 'coeff' not in st.session_state:
+        st.session_state.df, st.session_state.dt = heuristic_score(win_len)
+    with st.popover("See Heuristic Scores"):
+        st.markdown("Incentive for doing")
+        st.table(st.session_state.df[0].map(format_value))
+        st.markdown("Incentive for blocking")
+        st.table(st.session_state.df[1].map(format_value))
+        st.markdown("Incentive for capturing")
+        st.table(st.session_state.dt[0].map(format_value))
+        st.markdown("Incentive for avoiding capture")
+        st.table(st.session_state.dt[1].map(format_value))

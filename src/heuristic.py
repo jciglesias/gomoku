@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from src.utils import check_alignement_capture, remove_captured
-import time
 import functools
 
 def heuristic_row(board_size, win_len, tab, player, reward):
@@ -40,7 +39,7 @@ def heuristic_row(board_size, win_len, tab, player, reward):
                             break
                 if j < board_size and tab[j][i] == 0:
                     open += 1
-                result -= reward[1][open][k]
+                result += reward[1][open][k]
             else:
                 j += 1
         i += 1
@@ -83,7 +82,7 @@ def heuristic_diag(board_size, win_len, tab, player, reward):
                                 break
                     if i < board_size and i - j < board_size and tab[i][i - j] == 0:
                         open += 1
-                    result -= reward[1][open][k]
+                    result += reward[1][open][k]
             else:
                 i += 1
         j += 1
@@ -97,6 +96,11 @@ def heuristic_capture(tab, player, row, col, g_score, reward_capture):
         res -= reward_capture[1][g_score[-player]]
     return res
 
+def get_oponent(val, a, b, win_len):
+    if val == 10**(win_len):
+        return -val
+    return -val * a + b
+
 @functools.lru_cache
 def get_reward(win_len):
     reward_closed = [0] * (win_len + 1)
@@ -105,12 +109,12 @@ def get_reward(win_len):
     reward_closed[win_len] = 10**(win_len)
     reward_open1[win_len] = 10**(win_len)
     reward = [reward_closed, reward_open1, reward_open2]
-    reward_block = [[val * 1.5 for val in lst] for lst in reward]
-    reward = [reward, reward_block]
+    reward_block = [[get_oponent(val, 1.5, 0, win_len) for val in lst] for lst in reward]
+    reward = [np.array(reward), np.array(reward_block)]
     reward_capture = [10 + (i+1) for i in range(5)]
     reward_capture[4] = 10**(win_len)
-    reward_capture_block = [val + 10 for val in reward_capture]
-    reward_capture = [reward_capture, reward_capture_block]
+    reward_capture_block = [ get_oponent(val, 1, 10, win_len)  for val in reward_capture]
+    reward_capture = [np.array(reward_capture), np.array(reward_capture_block)]
     return reward, reward_capture
 
 def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["Capture", "Double Three"]):
@@ -126,3 +130,15 @@ def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["
     res += heuristic_diag(board_size, win_len, tab, player, reward)
     res += heuristic_diag(board_size, win_len, np.rot90(tab, k = 1), player, reward)
     return res
+
+def heuristic_score(win_len):
+    df, dt = get_reward(win_len)
+    df_1 = pd.DataFrame(df[0])
+    df_1.index = ['Score for closed', 'Score for semi-opened', 'Score for opened']
+    df_2 = pd.DataFrame(df[1])
+    df_2.index = ['Score for closed', 'Score for semi-opened', 'Score for opened']
+    dt_1 = pd.DataFrame(dt[0]).T
+    dt_1.index = ['Score']
+    dt_2 = pd.DataFrame(dt[1]).T
+    dt_2.index = ['Score']
+    return [df_1, df_2], [dt_1, dt_2]
