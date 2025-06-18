@@ -125,12 +125,10 @@ def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["
     reward, reward_capture = get_reward(win_len)
     tab = np.array(tab)
     res = 0
-    print(tab)
     if 'Capture' in game_rules:
         res += heuristic_capture(tab, player, row, col, g_score, reward_capture)
-        # if res > 0:
-        #     tab, _ = remove_captured(tab, row, col, 0, player)
-    print(tab)
+        if res > 0:
+            tab, _ = remove_captured(tab, row, col, 0, player)
     res += heuristic_row(board_size, win_len, tab, player, reward)
     res += heuristic_row(board_size, win_len, tab.transpose(), player, reward)
     res += heuristic_diag(board_size, win_len, tab, player, reward)
