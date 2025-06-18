@@ -17,7 +17,7 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
     # Score all possible moves using the heuristic
     for m in moves:
         new_board = make_move(board, m[0], m[1], player, empty_cell=0)
-        h = heuristic(board_size, win_len, new_board, player, m[0], m[1], score)
+        h = heuristic(board_size, win_len, new_board, player, m[0], m[1], score, game_rules)
         mv = move(m)
         mv.heuristic = h
         move_objects.append(mv)
@@ -25,15 +25,17 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
     # Sort by heuristic descending
     move_objects.sort(key=lambda x: x.heuristic, reverse=True)
     debugging(move_objects, debug, True)
+    best = move_objects[0]
     for mv in move_objects:
         test_board = make_move(board, mv.point[0], mv.point[1], player, empty_cell=0, game_rules=game_rules)
         debugging(f"First level branch: {mv.point} with heuristic {mv.heuristic}", debug)
+        if mv.heuristic < -140:
+            break # Skip sure loss moves
         if minmax(test_board, player, -1, depth_limit - 1, board_size, win_len, heuristic, score, debug, game_rules):
             debugging(f"Chose move leading to win/safety: {mv.point}", debug)
             return mv.point
 
     # If no immediate win found, return the best heuristic move
-    best = move_objects[0]
     return best.point if best else None
     
 def minmax(board, player, opponent, depth, board_size, win_len, heuristic, g_score, debug, game_rules):
@@ -47,7 +49,7 @@ def minmax(board, player, opponent, depth, board_size, win_len, heuristic, g_sco
     op_scored = []
     for m in op_moves:
         test_board = make_move(board, m[0], m[1], opponent, empty_cell=0)
-        score = heuristic(board_size, win_len, test_board, opponent, m[0], m[1], g_score)
+        score = heuristic(board_size, win_len, test_board, opponent, m[0], m[1], g_score, game_rules)
         op_scored.append((score, m))
     op_scored.sort(reverse=True)
 
@@ -61,7 +63,7 @@ def minmax(board, player, opponent, depth, board_size, win_len, heuristic, g_sco
         scored = []
         for m in moves:
             board = make_move(test_board, m[0], m[1], player, empty_cell=0)
-            score = heuristic(board_size, win_len, board, player, m[0], m[1], g_score)
+            score = heuristic(board_size, win_len, board, player, m[0], m[1], g_score, game_rules)
             scored.append((score, m))
         scored.sort(reverse=True)
 
