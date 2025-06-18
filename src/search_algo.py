@@ -25,15 +25,17 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
     # Sort by heuristic descending
     move_objects.sort(key=lambda x: x.heuristic, reverse=True)
     debugging(move_objects, debug, True)
+    best = move_objects[0]
     for mv in move_objects:
         test_board = make_move(board, mv.point[0], mv.point[1], player, empty_cell=0, game_rules=game_rules)
         debugging(f"First level branch: {mv.point} with heuristic {mv.heuristic}", debug)
+        if mv.heuristic < -140:
+            break # Skip sure loss moves
         if minmax(test_board, player, -1, depth_limit - 1, board_size, win_len, heuristic, score, debug, game_rules):
             debugging(f"Chose move leading to win/safety: {mv.point}", debug)
             return mv.point
 
     # If no immediate win found, return the best heuristic move
-    best = move_objects[0]
     return best.point if best else None
     
 def minmax(board, player, opponent, depth, board_size, win_len, heuristic, g_score, debug, game_rules):
