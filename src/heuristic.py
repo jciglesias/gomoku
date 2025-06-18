@@ -20,7 +20,7 @@ def heuristic_row(board_size, win_len, tab, player, reward):
                     j += 1
                 if j < board_size and tab[j][i] == 0:
                     open += 1
-                result += reward[open][k]
+                result += reward[0][open][k]
             elif cell_value == -player:
                 open = 0
                 if j - 1 >= 0 and tab[j - 1][i] == 0:
@@ -39,7 +39,7 @@ def heuristic_row(board_size, win_len, tab, player, reward):
                             break
                 if j < board_size and tab[j][i] == 0:
                     open += 1
-                result -= reward[open][k] * 1.5
+                result -= reward[1][open][k]
             else:
                 j += 1
         i += 1
@@ -63,7 +63,7 @@ def heuristic_diag(board_size, win_len, tab, player, reward):
                         i += 1
                     if i < board_size and i - j < board_size and cell_value == 0:
                             open += 1
-                    result += reward[open][k]
+                    result += reward[0][open][k]
             elif cell_value == -player:
                     open = 0
                     if i > 0 and i - j > 0 and tab[i - 1][i - 1 - j] == 0:
@@ -77,12 +77,12 @@ def heuristic_diag(board_size, win_len, tab, player, reward):
                         else:
                             lap += 1
                             if i + 1 < min_board and tab[i + 1][i + 1 - j] == -player and lap == 1:
-                                    i += 1
+                                i += 1
                             else:
                                 break
                     if i < board_size and i - j < board_size and tab[i][i - j] == 0:
                         open += 1
-                    result -= reward[open][k] * 1.5
+                    result -= reward[1][open][k]
             else:
                 i += 1
         j += 1
@@ -104,6 +104,8 @@ def get_reward(win_len):
     reward_closed[win_len] = 10**(win_len)
     reward_open1[win_len] = 10**(win_len)
     reward = [reward_closed, reward_open1, reward_open2]
+    reward_block = [[val * 1.5 for val in lst] for lst in reward]
+    reward = [reward, reward_block]
     reward_capture = [10 + (i+1) for i in range(5)]
     reward_capture[4] = 10**(win_len)
     return reward, reward_capture
