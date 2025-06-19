@@ -145,6 +145,7 @@ if st.session_state.current_piece == 1 and mode == "Player vs Bot":
     start_time = perf_counter()
     st.session_state.last_move = bot_move(st.session_state.board, board_size, win_len, st.session_state.turn, st.session_state.score, debug, game_rules)
     end_time = perf_counter()
+    st.session_state.turn += 1
     st.session_state.last_board = deepcopy(st.session_state.board)
     st.session_state.last_score = deepcopy(st.session_state.score)
     st.session_state.board = make_move(st.session_state.board, st.session_state.last_move[0], st.session_state.last_move[1], 1, 0, st.session_state.score, game_rules, st.session_state.turn)
