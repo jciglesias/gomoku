@@ -118,14 +118,18 @@ def get_oponent(val, a, b, win_len):
     return val * a + b
 
 @functools.lru_cache
-def get_reward(win_len):
+def get_reward(win_len, player=1, moy_block=0.5):
     reward_closed = [0] * (win_len + 1)
     reward_open1 = [0] + [10**i for i in range(-4, 2 * win_len - 4, 2)]
     reward_open2 = [0] + [10**i for i in range(-3, 2 * win_len - 3, 2)]
     reward_closed[win_len] = 10**(2 * win_len - 5)
     reward_open1[win_len] = 10**(2 * win_len - 5)
     reward = [reward_closed, reward_open1, reward_open2]
-    reward_block = [[get_oponent(val, -1.5, 0, win_len) for val in lst] for lst in reward]
+    if player == 1: #bot
+        coeff = - 1 - (1 - moy_block) / 2
+    else: #player
+        coeff = -1.5
+    reward_block = [[get_oponent(val, coeff, 0, win_len) for val in lst] for lst in reward]
     reward = [np.array(reward), np.array(reward_block)]
     reward_capture = [10 + (i + 1) for i in range(5)]
     reward_capture[4] = 10**(2 * win_len - 5)
@@ -134,7 +138,7 @@ def get_reward(win_len):
     return reward, reward_capture
 
 def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["Capture", "Double Three"]):
-    reward, reward_capture = get_reward(win_len)
+    reward, reward_capture = get_reward(win_len, player, g_score[-2])
     tab = np.array(tab)
     res = 0
     if 'Capture' in game_rules:
@@ -150,8 +154,8 @@ def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["
         return 10**(2 * win_len - 6)
     return res + res1 + res2 + res3 + res4
 
-def heuristic_score(win_len):
-    df, dt = get_reward(win_len)
+def heuristic_score(win_len, moy_block):
+    df, dt = get_reward(win_len, player=1, moy_block=moy_block)
     df_1 = pd.DataFrame(df[0]).iloc[:, 1:]
     df_1.index = ['Score for closed', 'Score for semi-opened', 'Score for opened']
     df_2 = pd.DataFrame(df[1]).iloc[:, 1:]
