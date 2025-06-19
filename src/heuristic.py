@@ -108,6 +108,8 @@ def heuristic_capture(tab, player, row, col, g_score, reward_capture):
     res = 0
     if check_alignement_capture(tab, row, col, player):
         res += reward_capture[0][g_score[player]]
+    if check_alignement_capture(tab, row, col, -player):
+        res += reward_capture[1][-g_score[-player]]
     if check_avoid_capture(tab, row, col, -player):
         res += reward_capture[1][g_score[-player]]
     return res
