@@ -42,6 +42,7 @@ with st.sidebar:
     mode = st.radio("Game Mode", ["Player vs Player", "Player vs Bot"], horizontal=True, key="mode", on_change=change_board_size)
     st.toggle("Suggest Moves", key="suggest_moves", disabled=mode != "Player vs Player")
     st.toggle("Hints", key="hints", disabled=mode != "Player vs Player")
+    st.toggle("Show last move", key="show_last_move")
     board_size = st.slider("Board Size", 5, 20, 19, 1, on_change=change_board_size, key="board_size")
     win_len = st.slider("Winning Length", 3, 10, 5, 1, on_change=change_board_size, key="win_len")
     debug = st.checkbox("Debug Mode", value=False, key="debug")
@@ -116,7 +117,7 @@ for i in range(board_size):
     cols = st.columns(board_size)
     for j in range(board_size):
         type_button = get_button_type(st.session_state.last_move, i, j,  points_suggested)
-        label = hint_marks[st.session_state.board[i][j]] if hints and (i, j) in hints else marks[st.session_state.board[i][j]] if st.session_state.last_move != (i, j) else b_marks[st.session_state.board[i][j]]
+        label = hint_marks[st.session_state.board[i][j]] if hints and (i, j) in hints else marks[st.session_state.board[i][j]] if st.session_state.last_move != (i, j) or not st.session_state.show_last_move else b_marks[st.session_state.board[i][j]]
         if cols[j].button(
             label,
             type=type_button,
