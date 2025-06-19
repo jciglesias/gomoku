@@ -151,7 +151,7 @@ def heuristic(board_size, win_len, tab, player, row, col, g_score, game_rules=["
     res4 = heuristic_diag(board_size, win_len, np.rot90(tab, k = 1), player, reward)
     combinaison = sum(x > 10 for x in [res1, res2, res3, res4])
     if combinaison >= 2:
-        return res + res1 + res2 + res3 + res4 + 10
+        return res + res1 + res2 + res3 + res4 + 5
     return res + res1 + res2 + res3 + res4
 
 def heuristic_score(win_len, moy_block):
