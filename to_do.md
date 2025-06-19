@@ -9,7 +9,7 @@
 - [X] Prendre en compte les captures possibles
 - [X] Prendre en compte les alignements apres le resultat de la capture
  
-## Algo MinMax
+## Algo alphabetapruning
 - [X] Verifier si le board est possible par rapport au move choisi par le bot (pas double threes)
 - [X] Ajuster le score en fonction d'une nouvelle capture
 
