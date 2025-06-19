@@ -24,8 +24,6 @@ def alignements_column(board_size, win_len, tab, player):
 def alignements_diag(board_size, win_len, tab, player):
     return 1
 
-
-
 def check_alignements(board_size, win_len, tab, player):
     align = []
     tab = np.array(tab)
