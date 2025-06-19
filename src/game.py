@@ -6,6 +6,9 @@ from time import perf_counter
 from src.heuristic import heuristic_score
 from copy import deepcopy
 
+def check_alignements(board_size, win_len, tab, player):
+    return [(x, x) for x in range(board_size)]  # Dummy implementation for compatibility
+
 def change_board_size():
     if st.session_state.mode == "Player vs Player":
         st.session_state.board = reset_game(0, st.session_state.board_size, st.session_state.game_type)
@@ -108,13 +111,15 @@ if st.session_state.current_piece == -1 and 'bot_time' in st.session_state:
 
 points_suggested = bot_suggestion(st.session_state.board, board_size, win_len, st.session_state.current_piece, st.session_state.score, debug, game_rules) if mode == "Player vs Player" and st.session_state.suggest_moves else None
 gray_zone = find_gray_pro_zone(st.session_state.board, board_size, 2 if type_of_start == 'Pro' else 3) if type_of_start in ['Pro', 'Long Pro'] and st.session_state.turn == 2 else []
+hints = check_alignements(board_size, win_len, st.session_state.board, st.session_state.current_piece * -1) if debug else None
 
 for i in range(board_size):
     cols = st.columns(board_size)
     for j in range(board_size):
         type_button = get_button_type(st.session_state.last_move, i, j,  points_suggested)
+        label = hint_marks[st.session_state.board[i][j]] if hints and (i, j) in hints else marks[st.session_state.board[i][j]] if st.session_state.last_move != (i, j) else b_marks[st.session_state.board[i][j]]
         if cols[j].button(
-            marks[st.session_state.board[i][j]] if st.session_state.last_move != (i, j) else b_marks[st.session_state.board[i][j]],
+            label,
             type=type_button,
             key=f"{i}-{j}", 
             disabled=(st.session_state.current_piece == 1 and mode == "Player vs Bot") or not st.session_state.player or (i,j) in gray_zone or (st.session_state.turn == 3 and type_of_start == 'Swap2' and st.session_state.swap2_choise is None)
