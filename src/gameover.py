@@ -15,7 +15,10 @@ with l.container(border=True):
     st.write("Final Board State:")
     if 'board' in st.session_state:
         for row in st.session_state.board:
-            st.write(" ".join(marks[cell] for cell in row))
+            cols = st.columns(len(row))
+            for i, cell in enumerate(row):
+                with cols[i]:
+                    st.write(marks[cell])
         del st.session_state['board']
 with r.container():
     if st.button("Play Again"):
