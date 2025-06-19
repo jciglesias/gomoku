@@ -172,7 +172,7 @@ def find_gray_pro_zone(board, board_size, zone_size):
     moves = get_possible_moves(board, empty_cell=0, radius=zone_size, piece=-1)
     return moves if moves else []
 
-def get_possible_moves(board, empty_cell, radius=2, piece=None):
+def get_possible_moves(board, empty_cell, radius=1, piece=None):
     size = len(board)
     possible_moves = set()
 
