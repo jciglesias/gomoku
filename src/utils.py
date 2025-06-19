@@ -46,13 +46,10 @@ def check_alignement_capture(board, row, col, player):
     for dr, dc in directions:
         r, c = row + dr, col + dc
         if 0 <= r < board_size and 0 <= c < board_size:
-            # print(f"board[{r}][{c}] {board[r][c]}")
-            if board[r][c] == -player:  # Found an opponent piece
-                # search in the same direction for another opponent piece
+            if board[r][c] == -player: 
                 r2, c2 = r + dr, c + dc
                 if 0 <= r2 < board_size and 0 <= c2 < board_size:
                     if board[r2][c2] == -player:
-                        # check if the next cell in the same direction is player's piece
                         r3, c3 = r2 + dr, c2 + dc
                         if 0 <= r3 < board_size and 0 <= c3 < board_size:
                             if board[r3][c3] == player:
@@ -60,45 +57,36 @@ def check_alignement_capture(board, row, col, player):
     return False
 
 def check_block(board, row, col, empty_cell, player):
-    # Check if the move for blocking an opponent
     board_size = len(board)
     directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
     for dr, dc in directions:
         r, c = row + dr, col + dc
-        if 0 <= r < board_size and 0 <= c < board_size and  board[r][c] == -player:  # Found an opponent piece
-                # search in the same direction for another opponent piece
+        if 0 <= r < board_size and 0 <= c < board_size and  board[r][c] == -player: 
                 r2, c2 = r + dr, c + dc
                 if 0 <= r2 < board_size and 0 <= c2 < board_size and board[r2][c2] == -player:
                         return 1
     return 0
 
 def check_capture(board, row, col, empty_cell, player):
-    # Check if the move captures exactly two opponent pieces
     if board[row][col] != empty_cell:
         return False
-    # print("check_capture", row, col)
-    # Check all 8 directions for a capture
     return check_alignement_capture(board, row, col, player)
 
 def remove_captured(board, row, col, empty_cell, player):
     board_size = len(board)
     directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
     count_captured = 0
-    # Check all 8 directions for a capture
     for dr, dc in directions:
         r, c = row + dr, col + dc
         if 0 <= r < board_size and 0 <= c < board_size:
-            if board[r][c] == -player:  # Found an opponent piece
-                # search in the same direction for another opponent piece
+            if board[r][c] == -player:
                 r2, c2 = r + dr, c + dc
                 if 0 <= r2 < board_size and 0 <= c2 < board_size:
                     if board[r2][c2] == -player:
-                        # check if the next cell in the same direction is player's piece
                         r3, c3 = r2 + dr, c2 + dc
                         if 0 <= r3 < board_size and 0 <= c3 < board_size:
                             if board[r3][c3] == player:
                                 count_captured += 1
-                                # Remove the captured pieces
                                 board[r][c] = empty_cell
                                 board[r2][c2] = empty_cell
     return board, count_captured
@@ -106,7 +94,6 @@ def remove_captured(board, row, col, empty_cell, player):
 def make_move(board_og, row, col, player, empty_cell, score=None, game_rules=[], turn=0) -> list:
     board = deepcopy(board_og)
     is_capture = check_capture(board, row, col, empty_cell, player)
-    # print("turn", turn, "player", player, "is_capture", is_capture, row, col)
     if board[row][col] == empty_cell:
         board[row][col] = player
         if is_capture and 'Capture' in game_rules:
@@ -149,7 +136,6 @@ def reset_game(empty_cell, board_size, type_start):
     if type_start not in ['Pro', 'Long Pro']:
         return [[empty_cell for _ in range(board_size)] for _ in range(board_size)]
     else:
-        # start with -1 in the center for Pro and Long Pro
         center = board_size // 2
         board = [[empty_cell for _ in range(board_size)] for _ in range(board_size)]
         board[center][center] = -1
@@ -161,8 +147,6 @@ def switch_player(player):
 def get_button_type(last_move, i, j, suggestion=None):
     if suggestion and (i, j) in suggestion:
         return "primary"
-    # if last_move and last_move == (i, j):
-    #     return "secondary"
     return "tertiary"
 
 def check_empty_board(board, empty_cell):

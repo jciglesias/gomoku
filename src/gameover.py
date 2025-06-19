@@ -12,7 +12,6 @@ with l.container(border=True):
         del st.session_state['winner']
     if 'turn' in st.session_state:
         st.write(f"In {math.ceil(st.session_state.turn/2)} turns")
-    # show the final board state
     st.write("Final Board State:")
     if 'board' in st.session_state:
         for row in st.session_state.board:

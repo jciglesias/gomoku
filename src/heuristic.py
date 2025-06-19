@@ -127,9 +127,9 @@ def get_reward(win_len, player=1, moy_block=0.5):
     reward_closed[win_len] = 10**(2 * win_len - 5)
     reward_open1[win_len] = 10**(2 * win_len - 5)
     reward = [reward_closed, reward_open1, reward_open2]
-    if player == 1: #bot
+    if player == 1:
         coeff = - 1 - (1 - moy_block) / 2
-    else: #player
+    else:
         coeff = -1.5
     reward_block = [[get_oponent(val, coeff, 0, win_len) for val in lst] for lst in reward]
     reward = [np.array(reward), np.array(reward_block)]

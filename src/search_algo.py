@@ -24,7 +24,6 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
         return (len(board) // 2, len(board) // 2)
     move_objects = []
 
-    # Score all possible moves using the heuristic
     for m in moves:
         if not check_valid_move(board, m[0], m[1], empty_cell=0, player=player, game_rules=game_rules):
             debugging(f"Skipping invalid move {m} for player {player}", debug)
@@ -35,7 +34,6 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
         mv.heuristic = h
         move_objects.append(mv)
 
-    # Sort by heuristic descending
     move_objects.sort(key=lambda x: x.heuristic, reverse=True)
     debugging(move_objects, debug, True)
     counting = 0
@@ -43,7 +41,7 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
         test_board = make_move(board, mv.point[0], mv.point[1], player, empty_cell=0, game_rules=game_rules)
         debugging(f"First level branch: {mv.point} with heuristic {mv.heuristic}", debug)
         if mv.heuristic < get_lost_score(win_len):
-            break # Skip sure loss moves
+            break
         if minmax(test_board, player, -1, depth_limit - 1, board_size, win_len, heuristic, score, debug, game_rules):
             debugging(f"Chose move leading to win/safety: {mv.point}", debug)
             return mv.point
@@ -53,7 +51,6 @@ def greedy_best_first(board, board_size, win_len, heuristic, player, depth_limit
             break
 
     best = move_objects[0]
-    # If no immediate win found, return the best heuristic move
     return best.point if best else None
     
 def minmax(board, player, opponent, depth, board_size, win_len, heuristic, g_score, debug, game_rules):
@@ -69,10 +66,10 @@ def minmax(board, player, opponent, depth, board_size, win_len, heuristic, g_sco
         op_scored.append((score, m))
     op_scored.sort(reverse=True)
 
-    for op_h, op_move in op_scored[:3]:  # Only try top 3 moves for speed
+    for op_h, op_move in op_scored[:3]:
         test_board = make_move(board, op_move[0], op_move[1], opponent, empty_cell=0, game_rules=game_rules)
         debugging(f"Level {10-depth} opponent move: {op_move} with heuristic {op_h}", debug)
-        if op_h > get_win_score(win_len):  # Skip sure win moves for opponent
+        if op_h > get_win_score(win_len):
             debugging(f"Skipping opponent move {op_move} with heuristic {op_h}", debug)
             break
         if check_winner(test_board, empty_cell=0, board_size=board_size, win_len=win_len):
@@ -93,7 +90,7 @@ def minmax(board, player, opponent, depth, board_size, win_len, heuristic, g_sco
             debugging(f"Level {11-depth} bot move: {move} with heuristic {b_h}", debug)
             if b_h < get_lost_score(win_len):
                 debugging(f"Skipping move {move} with heuristic {b_h}", debug)
-                break # Skip sure loss moves
+                break
             if check_winner(board, empty_cell=0, board_size=board_size, win_len=win_len):
                 return True
 
