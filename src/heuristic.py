@@ -133,7 +133,9 @@ def get_reward(win_len, player=1, moy_block=0.5):
     reward = [np.array(reward), np.array(reward_block)]
     reward_capture = [10 + (i + 1) for i in range(5)]
     reward_capture[4] = 10**(2 * win_len - 5)
-    reward_capture_block = [ get_oponent(val, -1, 10, win_len)  for val in reward_capture]
+    reward_capture_block = [ get_oponent(val, -1, -1, win_len)  for val in reward_capture]
+    reward_capture_block[4] = -10**(2 * win_len - 5)
+    reward_capture_block[3] = -10**(2 * win_len - 7)
     reward_capture = [np.array(reward_capture), np.array(reward_capture_block)]
     return reward, reward_capture
 
