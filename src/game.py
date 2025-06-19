@@ -5,9 +5,7 @@ from src.valid_move import check_valid_move
 from time import perf_counter
 from src.heuristic import heuristic_score
 from copy import deepcopy
-
-def check_alignements(board_size, win_len, tab, player):
-    return [(x, x) for x in range(board_size)]  # Dummy implementation for compatibility
+from src.hint import check_alignements
 
 def change_board_size():
     if st.session_state.mode == "Player vs Player":
