@@ -41,7 +41,7 @@ def swap_player(next_piece, current_player, turn, game_type, swap2_choise=None):
 with st.sidebar:
     mode = st.radio("Game Mode", ["Player vs Player", "Player vs Bot"], horizontal=True, key="mode", on_change=change_board_size)
     st.toggle("Suggest Moves", key="suggest_moves", disabled=mode != "Player vs Player")
-    st.toggle("Hints", key="hints")
+    st.toggle("Hints", key="hints", disabled=mode != "Player vs Player")
     board_size = st.slider("Board Size", 5, 20, 19, 1, on_change=change_board_size, key="board_size")
     win_len = st.slider("Winning Length", 3, 10, 5, 1, on_change=change_board_size, key="win_len")
     debug = st.checkbox("Debug Mode", value=False, key="debug")
