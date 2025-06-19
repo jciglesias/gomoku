@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from src.utils import check_alignement_capture, remove_captured
+from src.utils import check_alignement_capture, remove_captured, check_avoid_capture
 import functools
 
 def heuristic_column(board_size, win_len, tab, player, reward):
@@ -108,7 +108,7 @@ def heuristic_capture(tab, player, row, col, g_score, reward_capture):
     res = 0
     if check_alignement_capture(tab, row, col, player):
         res += reward_capture[0][g_score[player]]
-    if check_alignement_capture(tab, row, col, -player):
+    if check_avoid_capture(tab, row, col, -player):
         res += reward_capture[1][g_score[-player]]
     return res
 

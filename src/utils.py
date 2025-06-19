@@ -11,8 +11,25 @@ b_marks = {
     -1: ':green-badge[:material/check_circle:]'
 }
 
+
+def check_avoid_capture(board, row, col, player):
+    board_size = len(board)
+    directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+    for dr, dc in directions:
+        r, c = row - dr, col - dc
+        if 0 <= r < board_size and 0 <= c < board_size:
+            if board[r][c] != player:
+                r2, c2 = row + dr, col + dc
+                if 0 <= r2 < board_size and 0 <= c2 < board_size:
+                    if board[r2][c2] == player:
+                        r3, c3 = r2 + dr, c2 + dc
+                        if 0 <= r3 < board_size and 0 <= c3 < board_size:
+                            if board[r3][c3] == -player:
+                                return True
+
+    return False
+
 def check_alignement_capture(board, row, col, player):
-    # print(f"  check_alignement_capture",  row, col)
     board_size = len(board)
     directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
     for dr, dc in directions:
