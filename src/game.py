@@ -58,9 +58,9 @@ if "player" not in st.session_state:
     st.session_state.player = choose_player(st.session_state.turn, None, type_of_start, st.session_state.swap2_choise == -1)
 
 if 'score' not in st.session_state:
-    st.session_state.score = {1: 0, -1: 0}
+    st.session_state.score = {2: 0.5, 1: 0, -1: 0, -2: 0.5}
 if 'last_score' not in st.session_state:
-    st.session_state.last_score = {1: 0, -1: 0}
+    st.session_state.last_score = {2: 0.5, 1: 0, -1: 0, -2: 0.5}
 l, m, r = st.columns(3)
 with l.container(border=True):
     st.subheader("Current Player:")
@@ -122,7 +122,7 @@ for i in range(board_size):
             if check_valid_move(st.session_state.board, i, j, 0, st.session_state.current_piece, game_rules):
                 st.session_state.last_board = deepcopy(st.session_state.board)
                 st.session_state.last_score = deepcopy(st.session_state.score)
-                st.session_state.board = make_move(st.session_state.board, i, j, st.session_state.current_piece, 0, st.session_state.score, game_rules)
+                st.session_state.board = make_move(st.session_state.board, i, j, st.session_state.current_piece, 0, st.session_state.score, game_rules, st.session_state.turn)
                 st.session_state.turn += 1
             else:
                 st.toast("Invalid move! Please try again.", icon="🚫")
@@ -147,7 +147,7 @@ if st.session_state.current_piece == 1 and mode == "Player vs Bot":
     end_time = perf_counter()
     st.session_state.last_board = deepcopy(st.session_state.board)
     st.session_state.last_score = deepcopy(st.session_state.score)
-    st.session_state.board = make_move(st.session_state.board, st.session_state.last_move[0], st.session_state.last_move[1], 1, 0, st.session_state.score, game_rules)
+    st.session_state.board = make_move(st.session_state.board, st.session_state.last_move[0], st.session_state.last_move[1], 1, 0, st.session_state.score, game_rules, st.session_state.turn)
     st.session_state.bot_time = end_time - start_time
     w = check_winner(st.session_state.board, 0, board_size, win_len)
     if w == 1 or st.session_state.score[1] >= 5:
@@ -165,8 +165,8 @@ if st.session_state.current_piece == 1 and mode == "Player vs Bot":
 with st.sidebar:
     st.button("Reset Game", disabled=st.session_state.current_piece == 1 and mode == "Player vs Bot", on_click=change_board_size)
     if 'coeff' not in st.session_state:
-        st.session_state.df, st.session_state.dt = heuristic_score(win_len)
-    with st.popover("See Heuristic Scores"):
+        st.session_state.df, st.session_state.dt = heuristic_score(win_len, moy_block=st.session_state.score.get(-2, 0.5))
+    with st.popover("See Heuristic Scores", disabled=mode == "Player vs Player"):
         st.markdown("Incentive for doing")
         st.table(st.session_state.df[0].map(format_value))
         st.markdown("Incentive for blocking")
