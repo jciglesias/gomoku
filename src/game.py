@@ -41,6 +41,7 @@ def swap_player(next_piece, current_player, turn, game_type, swap2_choise=None):
 with st.sidebar:
     mode = st.radio("Game Mode", ["Player vs Player", "Player vs Bot"], horizontal=True, key="mode", on_change=change_board_size)
     st.toggle("Suggest Moves", key="suggest_moves", disabled=mode != "Player vs Player")
+    st.toggle("Hints", key="hints")
     board_size = st.slider("Board Size", 5, 20, 19, 1, on_change=change_board_size, key="board_size")
     win_len = st.slider("Winning Length", 3, 10, 5, 1, on_change=change_board_size, key="win_len")
     debug = st.checkbox("Debug Mode", value=False, key="debug")
@@ -109,7 +110,7 @@ if st.session_state.current_piece == -1 and 'bot_time' in st.session_state:
 
 points_suggested = bot_suggestion(st.session_state.board, board_size, win_len, st.session_state.current_piece, st.session_state.score, debug, game_rules) if mode == "Player vs Player" and st.session_state.suggest_moves else None
 gray_zone = find_gray_pro_zone(st.session_state.board, board_size, 2 if type_of_start == 'Pro' else 3) if type_of_start in ['Pro', 'Long Pro'] and st.session_state.turn == 2 else []
-hints = check_alignements(board_size, win_len, st.session_state.board, st.session_state.current_piece * -1) if debug else None
+hints = check_alignements(board_size, win_len, st.session_state.board, st.session_state.current_piece * -1) if st.session_state.hints else None
 
 for i in range(board_size):
     cols = st.columns(board_size)
