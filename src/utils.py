@@ -11,6 +11,17 @@ b_marks = {
     -1: ':green-badge[:material/check_circle:]'
 }
 
+hint_marks = {
+    0: ':gray-background[:material/radio_button_unchecked:]',
+    1: ':red-background[:material/cancel:]',
+    -1: ':green-background[:material/check_circle:]'
+}
+
+hint_marks = {
+    0: ':gray-background[:material/radio_button_unchecked:]',
+    1: ':red-background[:material/cancel:]',
+    -1: ':green-background[:material/check_circle:]'
+}
 
 def check_avoid_capture(board, row, col, player):
     board_size = len(board)
